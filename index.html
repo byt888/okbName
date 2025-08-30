@@ -87,6 +87,29 @@
             .clip-polygon {
                 clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);
             }
+            .mobile-menu {
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            }
+            .mobile-menu.active {
+                transform: translateX(0);
+            }
+            .menu-backdrop {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 40;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+            }
+            .menu-backdrop.active {
+                opacity: 1;
+                visibility: visible;
+            }
         }
     </style>
     
@@ -188,6 +211,74 @@
             box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
         }
         
+        /* 移动端菜单样式 */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 300px;
+			background-color: #030712;
+			background-image: none;
+            z-index: 50;
+            padding: 2rem;
+			box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .mobile-menu .close-menu {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .mobile-menu ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 4rem;
+        }
+        
+        .mobile-menu ul li {
+            margin-bottom: 1.5rem;
+        }
+        
+        .mobile-menu a {
+            text-decoration: none;
+            color: theme('colors.web3-light-gray');
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .mobile-menu a:hover {
+            color: theme('colors.web3-blue');
+        }
+        
+        .mobile-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: theme('colors.web3-blue');
+            transition: width 0.3s ease;
+        }
+        
+        .mobile-menu a:hover::after {
+            width: 100%;
+        }
+        
+        .mobile-menu .register-nav-item a {
+            color: white;
+        }
+        
+        .mobile-menu .register-nav-item a::after {
+            background-color: white;
+        }
+        
         /* Scrollbar styling */
         ::-webkit-scrollbar {
             width: 8px;
@@ -210,6 +301,25 @@
 <body class="bg-web3-dark text-gray-200 bg-grid">
     <!-- Particle background -->
     <div id="particles-js"></div>
+    
+    <!-- 移动端菜单遮罩 -->
+    <div class="menu-backdrop" id="menuBackdrop"></div>
+    
+    <!-- 移动端菜单 -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="close-menu text-white" id="closeMenu">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul>
+            <li><a href="#mint-section" class="register-nav-item">注册</a></li>
+            <li><a href="#features">特性</a></li>
+            <li><a href="#comparison">对比</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><button onclick="window.open('https://web3.okx.com/zh-hans/nft/collection/xlayer/okb-inscription-domain-name', '_blank')" class="bg-gradient-to-r from-web3-blue to-web3-purple text-white px-6 py-2 rounded-lg font-medium btn-glow transition-all w-full">
+                交易市场
+            </button></li>
+        </ul>
+    </div>
     
     <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-effect border-b border-web3-light-gray/20">
@@ -235,7 +345,7 @@
             </div>
             
             <!-- Mobile menu button -->
-            <button class="md:hidden text-white text-2xl">
+            <button class="md:hidden text-white text-2xl" id="menuButton">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
@@ -675,362 +785,395 @@
                     </p>
                     <div class="flex space-x-4">
                         <a href="https://x.com/okbdomainname" target="_blank" class="w-10 h-10 rounded-full bg-web3-gray/50 flex items-center justify-center text-gray-400 hover:text-web3-blue hover:bg-web3-gray/80 transition-all">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="https://t.me/OKBdomainGroup" target="_blank" class="w-10 h-10 rounded-full bg-web3-gray/50 flex items-center justify-center text-gray-400 hover:text-web3-blue hover:bg-web3-gray/80 transition-all">
-                            <i class="fab fa-telegram"></i>
-                        </a>
-                        <a href="https://github.com/WoofingLabs" target="_blank" class="w-10 h-10 rounded-full bg-web3-gray/50 flex items-center justify-center text-gray-400 hover:text-web3-blue hover:bg-web3-gray/80 transition-all">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="https://x.com/WoofingJace" target="_blank" class="w-10 h-10 rounded-full bg-web3-gray/50 flex items-center justify-center text-gray-400 hover:text-web3-blue hover:bg-web3-gray/80 transition-all">
-                            <i class="fab fa-discord"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="border-t border-web3-light-gray/20 pt-8">
-                <p class="text-gray-500 text-sm text-center max-w-3xl mx-auto">
-                    以上内容仅供参考。投资涉及风险，您应当充分了解相关风险并自行做出投资决策。本网站不对您的投资行为承担任何责任。
-                </p>
-                <p class="text-gray-600 text-xs text-center mt-6">
-                    © 2023 .OKB Name. 保留所有权利。
-                </p>
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://t.me/OKBdomainGroup" target="_blank" class="w-10 h-10 rounded-full bg-web3-gray/50 flex items-center justify-center text-gray-400 hover:text-web3-blue hover:bg-web3-gray/80 transition-all">
+                    <i class="fab fa-telegram"></i>
+                </a>
+                <a href="https://github.com/WoofingLabs" target="_blank" class="w-10 h-10 rounded-full bg-web3-gray/50 flex items-center justify-center text-gray-400 hover:text-web3-blue hover:bg-web3-gray/80 transition-all">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://x.com/WoofingJace" target="_blank" class="w-10 h-10 rounded-full bg-web3-gray/50 flex items-center justify-center text-gray-400 hover:text-web3-blue hover:bg-web3-gray/80 transition-all">
+                    <i class="fab fa-discord"></i>
+                </a>
             </div>
         </div>
-    </footer>
+    </div>
+    
+    <div class="border-t border-web3-light-gray/20 pt-8">
+        <p class="text-gray-500 text-sm text-center max-w-3xl mx-auto">
+            以上内容仅供参考。投资涉及风险，您应当充分了解相关风险并自行做出投资决策。本网站不对您的投资行为承担任何责任。
+        </p>
+        <p class="text-gray-600 text-xs text-center mt-6">
+            © 2023 .OKB Name. 保留所有权利。
+        </p>
+    </div>
+</div>
+</footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script>
-        // 初始化粒子效果
-        particlesJS('particles-js', {
-            "particles": {
-                "number": {
-                    "value": 60,
-                    "density": {
-                        "enable": true,
-                        "value_area": 800
-                    }
-                },
-                "color": {
-                    "value": ["#0EA5E9", "#8B5CF6", "#EC4899"]
-                },
-                "shape": {
-                    "type": "circle"
-                },
-                "opacity": {
-                    "value": 0.1,
-                    "random": true
-                },
-                "size": {
-                    "value": 3,
-                    "random": true
-                },
-                "line_linked": {
+<script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    // 初始化粒子效果
+    particlesJS('particles-js', {
+        "particles": {
+            "number": {
+                "value": 60,
+                "density": {
                     "enable": true,
-                    "distance": 150,
-                    "color": "#0EA5E9",
-                    "opacity": 0.05,
-                    "width": 1
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 1,
-                    "direction": "none",
-                    "random": true,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false
+                    "value_area": 800
                 }
             },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": {
-                    "onhover": {
-                        "enable": true,
-                        "mode": "grab"
-                    },
-                    "onclick": {
-                        "enable": true,
-                        "mode": "push"
-                    },
-                    "resize": true
-                },
-                "modes": {
-                    "grab": {
-                        "distance": 140,
-                        "line_linked": {
-                            "opacity": 0.1
-                        }
-                    },
-                    "push": {
-                        "particles_nb": 3
-                    }
-                }
+            "color": {
+                "value": ["#0EA5E9", "#8B5CF6", "#EC4899"]
             },
-            "retina_detect": true
-        });
+            "shape": {
+                "type": "circle"
+            },
+            "opacity": {
+                "value": 0.1,
+                "random": true
+            },
+            "size": {
+                "value": 3,
+                "random": true
+            },
+            "line_linked": {
+                "enable": true,
+                "distance": 150,
+                "color": "#0EA5E9",
+                "opacity": 0.05,
+                "width": 1
+            },
+            "move": {
+                "enable": true,
+                "speed": 1,
+                "direction": "none",
+                "random": true,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false
+            }
+        },
+        "interactivity": {
+            "detect_on": "canvas",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "grab"
+                },
+                "onclick": {
+                    "enable": true,
+                    "mode": "push"
+                },
+                "resize": true
+            },
+            "modes": {
+                "grab": {
+                    "distance": 140,
+                    "line_linked": {
+                        "opacity": 0.1
+                    }
+                },
+                "push": {
+                    "particles_nb": 3
+                }
+            }
+        },
+        "retina_detect": true
+    });
 
-        // 滚动动画
-        document.addEventListener('DOMContentLoaded', function() {
-            const animateElements = document.querySelectorAll('.animate-on-scroll');
+    // 滚动动画
+    document.addEventListener('DOMContentLoaded', function() {
+        const animateElements = document.querySelectorAll('.animate-on-scroll');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        
+        animateElements.forEach(element => {
+            observer.observe(element);
+        });
+        
+        // 移动端菜单交互
+        const menuButton = document.getElementById('menuButton');
+        const closeMenu = document.getElementById('closeMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuBackdrop = document.getElementById('menuBackdrop');
+        
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+            menuBackdrop.classList.add('active');
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+        });
+        
+        closeMenu.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+            menuBackdrop.classList.remove('active');
+            document.body.style.overflow = ''; // 恢复背景滚动
+        });
+        
+        menuBackdrop.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+            menuBackdrop.classList.remove('active');
+            document.body.style.overflow = ''; // 恢复背景滚动
+        });
+        
+        // 移动端菜单中的链接点击后关闭菜单
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                menuBackdrop.classList.remove('active');
+                document.body.style.overflow = ''; // 恢复背景滚动
+            });
+        });
+    });
+
+    // FAQ 交互
+    document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', () => {
+            const item = question.parentNode;
+            const icon = question.querySelector('.fas.fa-chevron-down');
             
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, {
-                threshold: 0.1
+            // 关闭其他所有打开的FAQ项
+            document.querySelectorAll('.faq-item').forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                    otherItem.querySelector('.fas.fa-chevron-down').style.transform = 'rotate(0deg)';
+                }
             });
             
-            animateElements.forEach(element => {
-                observer.observe(element);
-            });
-        });
-
-        // FAQ 交互
-        document.querySelectorAll('.faq-question').forEach(question => {
-            question.addEventListener('click', () => {
-                const item = question.parentNode;
-                const icon = question.querySelector('.fas.fa-chevron-down');
-                
-                // 关闭其他所有打开的FAQ项
-                document.querySelectorAll('.faq-item').forEach(otherItem => {
-                    if (otherItem !== item && otherItem.classList.contains('active')) {
-                        otherItem.classList.remove('active');
-                        otherItem.querySelector('.fas.fa-chevron-down').style.transform = 'rotate(0deg)';
-                    }
-                });
-                
-                // 切换当前FAQ项
-                item.classList.toggle('active');
-                if (item.classList.contains('active')) {
-                    icon.style.transform = 'rotate(180deg)';
-                } else {
-                    icon.style.transform = 'rotate(0deg)';
-                }
-            });
-        });
-
-        // 滚动到铸造区域
-        function scrollToMintSection() {
-            const mintSection = document.getElementById('mint-section');
-            if (mintSection) {
-                window.scrollTo({
-                    top: mintSection.offsetTop - 80,
-                    behavior: 'smooth'
-                });
-            }
-        }
-
-        // 铸造功能代码
-        let web3, accounts, domainContract;
-        const okbContract = {
-            address: '0xBf13Ed020DCF22bc8216A23A1167A5dD1fDC2D0E',
-            suffix: 'okb',
-            protocol: 'okbname',
-            currency: 'OKB',
-            name: 'OKB Inscription Domain Name',
-            symbol: 'DOKB'
-        };
-        const domainContractABI = [
-            {"inputs":[{"internalType":"string","name":"_id","type":"string"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},
-            {"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},
-            {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
-            {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"minter","type":"address"},{"indexed":false,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":false,"internalType":"string","name":"id","type":"string"}],"name":"Minted","type":"event"},
-            {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenName","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"tokenOfOwnerByIndex","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-            {"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-            {"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
-            {"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
-            {"inputs":[],"name":"SUFFIX","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"idsMintedLower","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"ownerToTokenId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}
-        ];
-        const xLayer = {
-            chainId: 196,
-            name: 'X Layer mainnet',
-            explorerUrl: 'https://www.okx.com/web3/explorer/xlayer',
-            rpcUrl: 'https://rpc.xlayer.tech'
-        };
-
-        async function connectWallet() {
-            const status = document.getElementById('networkStatus');
-            try {
-                if (!window.ethereum) {
-                    status.innerHTML = '未检测到钱包，请安装 <a href="https://metamask.io" target="_blank" class="text-web3-blue">MetaMask</a>。';
-                    throw new Error("未检测到钱包");
-                }
-                status.innerText = "正在连接...";
-                web3 = new Web3(window.ethereum);
-                accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                if (!accounts.length) throw new Error("请解锁您的钱包或连接钱包。");
-                const chainId = await web3.eth.getChainId();
-                if (chainId !== 196) {
-                    try {
-                        await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xc4' }] });
-                    } catch (switchError) {
-                        if (switchError.code === 4902) {
-                            await window.ethereum.request({
-                                method: 'wallet_addEthereumChain',
-                                params: [{
-                                    chainId: '0xc4',
-                                    chainName: 'X Layer mainnet',
-                                    nativeCurrency: { name: 'OKB', symbol: 'OKB', decimals: 18 },
-                                    rpcUrls: ['https://rpc.xlayer.tech'],
-                                    blockExplorerUrls: ['https://www.okx.com/web3/explorer/xlayer']
-                                }]
-                            });
-                        } else throw switchError;
-                    }
-                }
-                document.getElementById('walletAddress').innerText = `${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
-                domainContract = new web3.eth.Contract(domainContractABI, okbContract.address);
-                status.innerText = "已连接到 X Layer";
-            } catch (error) {
-                console.error(error);
-                status.innerText = "连接失败: " + error.message;
-            }
-        }
-
-        function isValidString(str) {
-            const strBytes = new TextEncoder().encode(str);
-            if (strBytes.length === 0 || strBytes.length > 15) return false;
-            for (let i = 0; i < strBytes.length; i++) {
-                const char = strBytes[i];
-                if (!(char >= 48 && char <= 57) && !(char >= 65 && char <= 90) && !(char >= 97 && char <= 122)) return false;
-            }
-            return true;
-        }
-
-        function convertToHex() {
-            const input = document.getElementById('domainId').value.trim();
-            const output = document.getElementById('hexOutputText');
-            const status = document.getElementById('mintStatus');
-            const copyHexButton = document.getElementById('copyHexButton');
-
-            if (!input) {
-                output.textContent = '请输入域名以查看 Hex 数据';
-                output.dataset.hex = '';
-                status.textContent = '';
-                copyHexButton.disabled = true;
-                return;
-            }
-
-            if (!isValidString(input)) {
-                output.textContent = '无效输入：仅限字母和数字，1-15个字符';
-                output.dataset.hex = '';
-                status.textContent = '无效输入';
-                copyHexButton.disabled = true;
-                return;
-            }
-
-            const inscription = `data:,{"p":"${okbContract.protocol}","op":"reg","name":"${input}.${okbContract.suffix}"}`;
-            const hexData = '0x' + Array.from(new TextEncoder().encode(inscription)).map(byte => byte.toString(16).padStart(2, '0')).join('');
-            output.textContent = hexData;
-            output.dataset.hex = hexData;
-            status.textContent = `已生成 ${input}.${okbContract.suffix} 的 Hex 数据`;
-            copyHexButton.disabled = false;
-        }
-
-        function copyToClipboard(type) {
-            const status = document.getElementById('mintStatus');
-            let textToCopy;
-            let sourceElement;
-
-            if (type === 'hex') {
-                sourceElement = document.getElementById('hexOutputText');
-                textToCopy = sourceElement.dataset.hex || '';
+            // 切换当前FAQ项
+            item.classList.toggle('active');
+            if (item.classList.contains('active')) {
+                icon.style.transform = 'rotate(180deg)';
             } else {
-                sourceElement = document.getElementById('contractAddress');
-                textToCopy = sourceElement.textContent;
-            }
-
-            if (!textToCopy || textToCopy === '请输入域名以查看 Hex 数据' || textToCopy === '无效输入：仅限字母和数字，1-15个字符') {
-                status.textContent = `无可复制的${type === 'hex' ? 'Hex 数据' : '合约地址'}`;
-                return;
-            }
-
-            const textArea = document.createElement('textarea');
-            textArea.value = textToCopy;
-            textArea.style.position = 'fixed';
-            textArea.style.opacity = '0';
-            document.body.appendChild(textArea);
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                status.textContent = `${type === 'hex' ? 'Hex 数据' : '合约地址'} 已复制到剪贴板`;
-            } catch (error) {
-                console.error(`复制 ${type} 失败:`, error);
-                status.textContent = `无法复制${type === 'hex' ? 'Hex 数据' : '合约地址'}，请手动复制。`;
-            } finally {
-                document.body.removeChild(textArea);
-            }
-        }
-
-        async function mintDomain() {
-            const section = document.getElementById('mint-section');
-            const status = document.getElementById('mintStatus');
-            const domainId = document.getElementById('domainId').value.trim();
-            if (!domainId || domainId.length > 15 || !/^[a-zA-Z0-9]+$/.test(domainId)) {
-                status.innerText = "无效域名ID，仅限1-15个字母或数字。";
-                return;
-            }
-            if (!accounts) {
-                status.innerText = "请先连接您的钱包！";
-                return;
-            }
-            try {
-                section.classList.add('opacity-70');
-                status.innerText = "正在检查域名可用性...";
-                const domainIdLower = domainId.toLowerCase();
-                const isMinted = await domainContract.methods.idsMintedLower(domainIdLower).call();
-                if (isMinted) {
-                    status.innerText = "此域名ID已被铸造！";
-                    section.classList.remove('opacity-70');
-                    return;
-                }
-                const hasMinted = await domainContract.methods.ownerToTokenId(accounts[0]).call();
-                if (hasMinted != 0) {
-                    status.innerText = "此地址已铸造过一个域名！";
-                    section.classList.remove('opacity-70');
-                    return;
-                }
-                status.innerText = "正在铸造域名NFT...";
-                const gas = await domainContract.methods.mint(domainId).estimateGas({ from: accounts[0] }).catch(() => 600000);
-                const tx = await domainContract.methods.mint(domainId).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
-                status.innerHTML = `域名铸造成功！Token ID: ${tx.events.Minted.returnValues.tokenId} (<a href="${xLayer.explorerUrl}/token/${okbContract.address}?a=${tx.events.Minted.returnValues.tokenId}" target="_blank" class="text-web3-blue">在浏览器查看</a>)`;
-                document.getElementById('domainId').value = '';
-            } catch (error) {
-                console.error(error);
-                status.innerText = "铸造失败: " + (error.message.includes('revert') ? error.message.split('revert')[1]?.trim() || '未知原因' : error.message);
-            } finally {
-                section.classList.remove('opacity-70');
-            }
-        }
-
-        // 事件监听
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('copyHexButton').disabled = true;
-            document.getElementById('copyAddressButton').disabled = false;
-            document.getElementById('connectButton').addEventListener('click', connectWallet);
-            document.getElementById('mintDomain').addEventListener('click', mintDomain);
-            document.getElementById('copyHexButton').addEventListener('click', () => copyToClipboard('hex'));
-            document.getElementById('copyAddressButton').addEventListener('click', () => copyToClipboard('address'));
-            
-            if (!window.location.protocol.startsWith('http')) {
-                document.getElementById('networkStatus').innerHTML = '点击连接钱包...';
-            } else if (!window.ethereum) {
-                document.getElementById('networkStatus').innerHTML = '未检测到钱包，请安装 <a href="https://metamask.io" class="text-web3-blue">MetaMask</a>。';
+                icon.style.transform = 'rotate(0deg)';
             }
         });
-    </script>
+    });
+
+    // 滚动到铸造区域
+    function scrollToMintSection() {
+        const mintSection = document.getElementById('mint-section');
+        if (mintSection) {
+            window.scrollTo({
+                top: mintSection.offsetTop - 80,
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    // 铸造功能代码
+    let web3, accounts, domainContract;
+    const okbContract = {
+        address: '0xBf13Ed020DCF22bc8216A23A1167A5dD1fDC2D0E',
+        suffix: 'okb',
+        protocol: 'okbname',
+        currency: 'OKB',
+        name: 'OKB Inscription Domain Name',
+        symbol: 'DOKB'
+    };
+    const domainContractABI = [
+        {"inputs":[{"internalType":"string","name":"_id","type":"string"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"minter","type":"address"},{"indexed":false,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":false,"internalType":"string","name":"id","type":"string"}],"name":"Minted","type":"event"},
+        {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenName","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"tokenOfOwnerByIndex","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"SUFFIX","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"idsMintedLower","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"ownerToTokenId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}
+    ];
+    const xLayer = {
+        chainId: 196,
+        name: 'X Layer mainnet',
+        explorerUrl: 'https://www.okx.com/web3/explorer/xlayer',
+        rpcUrl: 'https://rpc.xlayer.tech'
+    };
+
+    async function connectWallet() {
+        const status = document.getElementById('networkStatus');
+        try {
+            if (!window.ethereum) {
+                status.innerHTML = '未检测到钱包，请安装 <a href="https://metamask.io" target="_blank" class="text-web3-blue">MetaMask</a>。';
+                throw new Error("未检测到钱包");
+            }
+            status.innerText = "正在连接...";
+            web3 = new Web3(window.ethereum);
+            accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            if (!accounts.length) throw new Error("请解锁您的钱包或连接钱包。");
+            const chainId = await web3.eth.getChainId();
+            if (chainId !== 196) {
+                try {
+                    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xc4' }] });
+                } catch (switchError) {
+                    if (switchError.code === 4902) {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: '0xc4',
+                                chainName: 'X Layer mainnet',
+                                nativeCurrency: { name: 'OKB', symbol: 'OKB', decimals: 18 },
+                                rpcUrls: ['https://rpc.xlayer.tech'],
+                                blockExplorerUrls: ['https://www.okx.com/web3/explorer/xlayer']
+                            }]
+                        });
+                    } else throw switchError;
+                }
+            }
+            document.getElementById('walletAddress').innerText = `${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
+            domainContract = new web3.eth.Contract(domainContractABI, okbContract.address);
+            status.innerText = "已连接到 X Layer";
+        } catch (error) {
+            console.error(error);
+            status.innerText = "连接失败: " + error.message;
+        }
+    }
+
+    function isValidString(str) {
+        const strBytes = new TextEncoder().encode(str);
+        if (strBytes.length === 0 || strBytes.length > 15) return false;
+        for (let i = 0; i < strBytes.length; i++) {
+            const char = strBytes[i];
+            if (!(char >= 48 && char <= 57) && !(char >= 65 && char <= 90) && !(char >= 97 && char <= 122)) return false;
+        }
+        return true;
+    }
+
+    function convertToHex() {
+        const input = document.getElementById('domainId').value.trim();
+        const output = document.getElementById('hexOutputText');
+        const status = document.getElementById('mintStatus');
+        const copyHexButton = document.getElementById('copyHexButton');
+
+        if (!input) {
+            output.textContent = '请输入域名以查看 Hex 数据';
+            output.dataset.hex = '';
+            status.textContent = '';
+            copyHexButton.disabled = true;
+            return;
+        }
+
+        if (!isValidString(input)) {
+            output.textContent = '无效输入：仅限字母和数字，1-15个字符';
+            output.dataset.hex = '';
+            status.textContent = '无效输入';
+            copyHexButton.disabled = true;
+            return;
+        }
+
+        const inscription = `data:,{"p":"${okbContract.protocol}","op":"reg","name":"${input}.${okbContract.suffix}"}`;
+        const hexData = '0x' + Array.from(new TextEncoder().encode(inscription)).map(byte => byte.toString(16).padStart(2, '0')).join('');
+        output.textContent = hexData;
+        output.dataset.hex = hexData;
+        status.textContent = `已生成 ${input}.${okbContract.suffix} 的 Hex 数据`;
+        copyHexButton.disabled = false;
+    }
+
+    function copyToClipboard(type) {
+        const status = document.getElementById('mintStatus');
+        let textToCopy;
+        let sourceElement;
+
+        if (type === 'hex') {
+            sourceElement = document.getElementById('hexOutputText');
+            textToCopy = sourceElement.dataset.hex || '';
+        } else {
+            sourceElement = document.getElementById('contractAddress');
+            textToCopy = sourceElement.textContent;
+        }
+
+        if (!textToCopy || textToCopy === '请输入域名以查看 Hex 数据' || textToCopy === '无效输入：仅限字母和数字，1-15个字符') {
+            status.textContent = `无可复制的${type === 'hex' ? 'Hex 数据' : '合约地址'}`;
+            return;
+        }
+
+        const textArea = document.createElement('textarea');
+        textArea.value = textToCopy;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            status.textContent = `${type === 'hex' ? 'Hex 数据' : '合约地址'} 已复制到剪贴板`;
+        } catch (error) {
+            console.error(`复制 ${type} 失败:`, error);
+            status.textContent = `无法复制${type === 'hex' ? 'Hex 数据' : '合约地址'}，请手动复制。`;
+        } finally {
+            document.body.removeChild(textArea);
+        }
+    }
+
+    async function mintDomain() {
+        const section = document.getElementById('mint-section');
+        const status = document.getElementById('mintStatus');
+        const domainId = document.getElementById('domainId').value.trim();
+        if (!domainId || domainId.length > 15 || !/^[a-zA-Z0-9]+$/.test(domainId)) {
+            status.innerText = "无效域名ID，仅限1-15个字母或数字。";
+            return;
+        }
+        if (!accounts) {
+            status.innerText = "请先连接您的钱包！";
+            return;
+        }
+        try {
+            section.classList.add('opacity-70');
+            status.innerText = "正在检查域名可用性...";
+            const domainIdLower = domainId.toLowerCase();
+            const isMinted = await domainContract.methods.idsMintedLower(domainIdLower).call();
+            if (isMinted) {
+                status.innerText = "此域名ID已被铸造！";
+                section.classList.remove('opacity-70');
+                return;
+            }
+            const hasMinted = await domainContract.methods.ownerToTokenId(accounts[0]).call();
+            if (hasMinted != 0) {
+                status.innerText = "此地址已铸造过一个域名！";
+                section.classList.remove('opacity-70');
+                return;
+            }
+            status.innerText = "正在铸造域名NFT...";
+            const gas = await domainContract.methods.mint(domainId).estimateGas({ from: accounts[0] }).catch(() => 600000);
+            const tx = await domainContract.methods.mint(domainId).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
+            status.innerHTML = `域名铸造成功！Token ID: ${tx.events.Minted.returnValues.tokenId} (<a href="${xLayer.explorerUrl}/token/${okbContract.address}?a=${tx.events.Minted.returnValues.tokenId}" target="_blank" class="text-web3-blue">在浏览器查看</a>)`;
+            document.getElementById('domainId').value = '';
+        } catch (error) {
+            console.error(error);
+            status.innerText = "铸造失败: " + (error.message.includes('revert') ? error.message.split('revert')[1]?.trim() || '未知原因' : error.message);
+        } finally {
+            section.classList.remove('opacity-70');
+        }
+    }
+
+    // 事件监听
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('copyHexButton').disabled = true;
+        document.getElementById('copyAddressButton').disabled = false;
+        document.getElementById('connectButton').addEventListener('click', connectWallet);
+        document.getElementById('mintDomain').addEventListener('click', mintDomain);
+        document.getElementById('copyHexButton').addEventListener('click', () => copyToClipboard('hex'));
+        document.getElementById('copyAddressButton').addEventListener('click', () => copyToClipboard('address'));
+        
+        if (!window.location.protocol.startsWith('http')) {
+            document.getElementById('networkStatus').innerHTML = '点击连接钱包...';
+        } else if (!window.ethereum) {
+            document.getElementById('networkStatus').innerHTML = '未检测到钱包，请安装 <a href="https://metamask.io" class="text-web3-blue">MetaMask</a>。';
+        }
+    });
+</script>
 </body>
 </html>
-    

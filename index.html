@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>.OKB Name | XLayer链首个去中心化DID</title>
+    <link href="https://s2.ssl.qhres2.com/static/56662140ef7d5d03.css" rel="stylesheet">
+    <link href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="https://swap.woofingjace.com/image/tokens/OKB.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'web3-dark': '#050A1C',
+                        'web3-darker': '#030712',
+                        'web3-blue': '#0EA5E9',
+                        'web3-purple': '#8B5CF6',
+                        'web3-cyan': '#22D3EE',
+                        'web3-pink': '#EC4899',
+                        'web3-gray': '#1E293B',
+                        'web3-light-gray': '#334155'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'breath': 'breath 2s ease-in-out infinite alternate', 
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px rgba(14, 165, 233, 0.5)' },
+                            '100%': { boxShadow: '0 0 20px rgba(14, 165, 233, 0.8)' },
+                        },
+                        breath: { 
+                            '0%': { 
+                                textShadow: '0 0 5px rgba(14, 165, 233, 0.5), 0 0 10px rgba(14, 165, 233, 0.3)',
+                                color: 'rgba(255, 255, 255, 0.9)'
+                            },
+                            '100%': { 
+                                textShadow: '0 0 10px rgba(14, 165, 233, 0.8), 0 0 20px rgba(14, 165, 233, 0.6), 0 0 30px rgba(14, 165, 233, 0.4)',
+                                color: 'rgba(255, 255, 255, 1)'
+                            }
+                        }
+                    }
+                },
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            .bg-grid {
+                background-image: 
+                    linear-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+                background-size: 30px 30px;
+            }
+            .neon-border {
+                box-shadow: 0 0 5px theme('colors.web3-blue'), 
+                            inset 0 0 5px theme('colors.web3-blue');
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background-color: rgba(30, 41, 59, 0.3);
+            }
+            .clip-polygon {
+                clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);
+            }
+        }
+    </style>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .hexagon {
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+        
+        .glowing-line {
+            height: 1px;
+            background: linear-gradient(90deg, 
+                rgba(14, 165, 233, 0) 0%, 
+                rgba(14, 165, 233, 1) 50%, 
+                rgba(14, 165, 233, 0) 100%);
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, theme('colors.web3-blue'), theme('colors.web3-purple'));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .btn-glow:hover {
+            box-shadow: 0 0 15px theme('colors.web3-blue'), 0 0 30px rgba(14, 165, 233, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: theme('colors.web3-blue');
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* 注册导航项的特殊样式 */
+        .register-nav-item {
+            position: relative;
+        }
+        
+        .register-nav-item::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -5px;
+            right: -5px;
+            bottom: -2px;
+            border-radius: 4px;
+            background: rgba(14, 165, 233, 0.2);
+            z-index: -1;
+            animation: breath 2s ease-in-out infinite alternate;
+        }
+        
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .pricing-card.highlight {
+            border-color: theme('colors.web3-blue');
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: theme('colors.web3-darker');
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.web3-gray');
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.web3-blue');
+        }
+    </style>
+</head>
+<body class="bg-web3-dark text-gray-200 bg-grid">
+    <!-- Particle background -->
+    <div id="particles-js"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect border-b border-web3-light-gray/20">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-web3-blue to-web3-purple flex items-center justify-center animate-pulse-slow">
+                    <i class="fas fa-globe text-white text-xl"></i>
+                </div>
+                <span class="text-2xl font-bold bg-gradient-to-r from-web3-blue to-web3-purple text-gradient">.OKB</span>
+            </div>
+            
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#mint-section" class="register-nav-item nav-link relative text-white font-medium animate-breath transition-colors">
+                    注册
+                </a>
+                <a href="#features" class="nav-link relative text-gray-300 hover:text-web3-blue transition-colors">特性</a>
+                <a href="#comparison" class="nav-link relative text-gray-300 hover:text-web3-blue transition-colors">对比</a>
+                <a href="#faq" class="nav-link relative text-gray-300 hover:text-web3-blue transition-colors">FAQ</a>
+                <button onclick="window.open('https://web3.okx.com/zh-hans/nft/collection/xlayer/okb-inscription-domain-name', '_blank')" class="bg-gradient-to-r from-web3-blue to-web3-purple text-white px-6 py-2 rounded-lg font-medium btn-glow transition-all">
+                    交易市场
+                </button>
+            </div>
+            
+            <!-- Mobile menu button -->
+            <button class="md:hidden text-white text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="min-h-screen pt-32 pb-20 relative overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-r from-web3-blue/10 to-web3-purple/10 blur-3xl"></div>
+        
+        <!-- Decorative elements -->
+        <div class="absolute top-20 left-10 w-20 h-20 hexagon bg-web3-blue/10 border border-web3-blue/30 animate-float"></div>
+        <div class="absolute bottom-40 right-20 w-32 h-32 hexagon bg-web3-purple/10 border border-web3-purple/30 animate-float" style="animation-delay: 1s"></div>
+        <div class="absolute top-1/3 right-1/4 w-16 h-16 rounded-full bg-web3-pink/10 border border-web3-pink/30 animate-float" style="animation-delay: 2s"></div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="inline-block px-4 py-1 rounded-full glass-effect border border-web3-blue/30 mb-6">
+                    <span class="text-web3-cyan text-sm font-medium">XLayer链首个去中心化DID</span>
+                </div>
+                
+                <h1 class="text-[clamp(2.5rem,8vw,5rem)] font-extrabold leading-tight mb-6">
+                    <span class="bg-gradient-to-r from-web3-blue via-web3-cyan to-web3-purple text-gradient">开启去中心化身份</span>
+                    <br>的新时代
+                </h1>
+                
+                <p class="text-[clamp(1rem,3vw,1.25rem)] text-gray-300 mb-10 max-w-2xl mx-auto">
+                    .OKB 是 XLayer 链首个DID后缀，为您提供完全去中心化的数字身份解决方案，让区块链地址变得简单易记
+                </p>
+                
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button onclick="scrollToMintSection()" class="bg-gradient-to-r from-web3-blue to-web3-purple text-white px-8 py-4 rounded-lg font-semibold text-lg btn-glow transition-all">
+                        获取您的.OKB Name
+                    </button>
+                    <button onclick="window.open('https://woofinglabs.github.io/mint/', '_blank')" class="glass-effect border border-web3-light-gray/30 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:border-web3-blue/50 transition-all">
+                        了解更多 <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+                
+                <div class="mt-16 flex justify-center">
+                    <div class="glass-effect border border-web3-light-gray/30 rounded-xl px-6 py-4 flex items-center space-x-4">
+                        <div class="flex -space-x-2">
+                            <img src="https://picsum.photos/id/1/40/40" alt="用户头像" class="w-10 h-10 rounded-full border-2 border-web3-dark">
+                            <img src="https://picsum.photos/id/2/40/40" alt="用户头像" class="w-10 h-10 rounded-full border-2 border-web3-dark">
+                            <img src="https://picsum.photos/id/3/40/40" alt="用户头像" class="w-10 h-10 rounded-full border-2 border-web3-dark">
+                            <div class="w-10 h-10 rounded-full border-2 border-web3-dark bg-web3-gray flex items-center justify-center text-xs font-medium">
+                                +2k
+                            </div>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm text-gray-400">已有超过20,000名用户加入</p>
+                            <div class="flex items-center mt-1">
+                                <div class="flex">
+                                    <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                    <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                    <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                    <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                    <i class="fas fa-star-half-alt text-yellow-400 text-xs"></i>
+                                </div>
+                                <span class="text-xs text-gray-400 ml-2">4.8/5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce">
+            <span class="text-sm text-gray-400 mb-2">向下滚动</span>
+            <i class="fas fa-chevron-down text-web3-blue"></i>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section id="features" class="py-20 relative">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
+                <div class="inline-block px-3 py-1 rounded-full bg-web3-gray/50 text-web3-cyan text-sm font-medium mb-4">
+                    核心特性
+                </div>
+                <h2 class="text-[clamp(1.5rem,5vw,3rem)] font-bold mb-6">
+                    为何选择<span class="bg-gradient-to-r from-web3-blue to-web3-purple text-gradient">.OKB Name</span>
+                </h2>
+                <p class="text-gray-400 text-lg">
+                    领先的区块链域名服务，为您提供安全、便捷的去中心化身份解决方案
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card glass-effect border border-web3-light-gray/20 rounded-xl p-6 relative transition-all hover:border-web3-blue/40 hover:-translate-y-2 animate-on-scroll">
+                    <div class="w-14 h-14 rounded-lg bg-web3-blue/10 flex items-center justify-center mb-6">
+                        <i class="fas fa-unlock-alt text-web3-blue text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">完全去中心化</h3>
+                    <p class="text-gray-400">
+                        没有中心化控制，没有项目方干预，真正的Web3.0体验，您的.OKB Name完全由您掌控。
+                    </p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="feature-card glass-effect border border-web3-light-gray/20 rounded-xl p-6 relative transition-all hover:border-web3-blue/40 hover:-translate-y-2 animate-on-scroll" style="transition-delay: 100ms">
+                    <div class="w-14 h-14 rounded-lg bg-web3-purple/10 flex items-center justify-center mb-6">
+                        <i class="fas fa-wallet text-web3-purple text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">超低Gas费用</h3>
+                    <p class="text-gray-400">
+                        注册费用低至0.01USDT，远低于其他区块链DID的注册成本，让更多人能够轻松拥有。
+                    </p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="feature-card glass-effect border border-web3-light-gray/20 rounded-xl p-6 relative transition-all hover:border-web3-blue/40 hover:-translate-y-2 animate-on-scroll" style="transition-delay: 200ms">
+                    <div class="w-14 h-14 rounded-lg bg-web3-cyan/10 flex items-center justify-center mb-6">
+                        <i class="fas fa-infinity text-web3-cyan text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">永久所有权</h3>
+                    <p class="text-gray-400">
+                        一次注册，永久拥有，无需续费，您的.OKB Name将永远属于您。
+                    </p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="feature-card glass-effect border border-web3-light-gray/20 rounded-xl p-6 relative transition-all hover:border-web3-blue/40 hover:-translate-y-2 animate-on-scroll">
+                    <div class="w-14 h-14 rounded-lg bg-web3-pink/10 flex items-center justify-center mb-6">
+                        <i class="fas fa-exchange-alt text-web3-pink text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">链上跨币转账</h3>
+                    <p class="text-gray-400">
+                        支持多种加密货币的链上直接转账，简化您的加密交易流程。
+                    </p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="feature-card glass-effect border border-web3-light-gray/20 rounded-xl p-6 relative transition-all hover:border-web3-blue/40 hover:-translate-y-2 animate-on-scroll" style="transition-delay: 100ms">
+                    <div class="w-14 h-14 rounded-lg bg-web3-blue/10 flex items-center justify-center mb-6">
+                        <i class="fas fa-bolt text-web3-blue text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">XLayer生态Gas</h3>
+                    <p class="text-gray-400">
+                        作为OKEX交易所平台币和XLayer链生态Gas币，.OKB Name深度整合生态优势。
+                    </p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="feature-card glass-effect border border-web3-light-gray/20 rounded-xl p-6 relative transition-all hover:border-web3-blue/40 hover:-translate-y-2 animate-on-scroll" style="transition-delay: 200ms">
+                    <div class="w-14 h-14 rounded-lg bg-web3-purple/10 flex items-center justify-center mb-6">
+                        <i class="fas fa-shield-alt text-web3-purple text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">安全可靠</h3>
+                    <p class="text-gray-400">
+                        基于区块链技术，提供不可篡改的记录和所有权证明，保障您的数字资产安全。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Comparison Section -->
+    <section id="comparison" class="py-20 bg-web3-darker relative">
+        <div class="absolute top-0 left-0 w-full h-px glowing-line"></div>
+        
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
+                <div class="inline-block px-3 py-1 rounded-full bg-web3-gray/50 text-web3-cyan text-sm font-medium mb-4">
+                    市场对比
+                </div>
+                <h2 class="text-[clamp(1.5rem,5vw,3rem)] font-bold mb-6">
+                    与主流数字货币<span class="bg-gradient-to-r from-web3-blue to-web3-purple text-gradient">对比</span>
+                </h2>
+                <p class="text-gray-400 text-lg">
+                    了解.OKB域名相比其他区块链域名的独特优势
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <!-- Bitcoin -->
+                <div class="glass-effect border border-web3-light-gray/20 rounded-xl overflow-hidden transition-all hover:border-web3-blue/40 hover:-translate-y-2 animate-on-scroll">
+                    <div class="h-2 bg-gradient-to-r from-amber-500 to-yellow-500"></div>
+                    <div class="p-6">
+                        <div class="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
+                            <i class="fab fa-bitcoin text-amber-500 text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-white">比特币 (BTC)</h3>
+                        <p class="text-gray-400 mb-6">
+                            数字黄金，价值存储首选，但交易速度慢，手续费高，不支持智能合约。
+                        </p>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-300">价值存储能力强</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-times text-red-500 mr-2"></i>
+                                <span class="text-gray-300">交易速度慢</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-times text-red-500 mr-2"></i>
+                                <span class="text-gray-300">不支持智能合约</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ethereum -->
+                <div class="glass-effect border border-web3-light-gray/20 rounded-xl overflow-hidden transition-all hover:border-web3-blue/40 hover:-translate-y-2 animate-on-scroll" style="transition-delay: 100ms">
+                    <div class="h-2 bg-gradient-to-r from-gray-700 to-gray-500"></div>
+                    <div class="p-6">
+                        <div class="w-16 h-16 rounded-full bg-gray-700/10 flex items-center justify-center mb-6">
+                            <i class="fab fa-ethereum text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-white">以太坊 (ETH)</h3>
+                        <p class="text-gray-400 mb-6">
+                            智能合约平台，生态丰富，但Gas费波动大，交易确认时间长。
+                        </p>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-300">生态系统丰富</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-times text-red-500 mr-2"></i>
+                                <span class="text-gray-300">Gas费用高</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-300">支持智能合约</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- OKB -->
+                <div class="glass-effect border border-web3-blue/40 rounded-xl overflow-hidden transition-all hover:-translate-y-2 relative animate-on-scroll" style="transition-delay: 200ms">
+                    <div class="absolute top-4 right-4 bg-web3-blue text-white text-xs font-bold px-3 py-1 rounded-full">
+                        推荐
+                    </div>
+                    <div class="h-2 bg-gradient-to-r from-web3-blue to-web3-purple"></div>
+                    <div class="p-6">
+                        <div class="w-16 h-16 rounded-full bg-web3-blue/10 flex items-center justify-center mb-6">
+                            <i class="fas fa-link text-web3-blue text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-white">OKB (.OKB域名)</h3>
+                        <p class="text-gray-400 mb-6">
+                            XLayer链原生Gas币，支持.OKB域名服务，交易快速，费用低廉，与OKEX生态深度整合。
+                        </p>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-300">超低交易费用</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-300">快速确认</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span class="text-gray-300">OKEX生态整合</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Mint Section -->
+    <section id="mint-section" class="py-20 bg-web3-darker relative">
+        <div class="absolute top-0 left-0 w-full h-px glowing-line"></div>
+        
+        <!-- Decorative elements -->
+        <div class="absolute top-1/4 left-10 w-32 h-32 hexagon bg-web3-purple/5 border border-web3-purple/20 animate-float"></div>
+        <div class="absolute bottom-1/4 right-10 w-24 h-24 rounded-full bg-web3-blue/5 border border-web3-blue/20 animate-float" style="animation-delay: 1.5s"></div>
+        
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
+                <div class="inline-block px-3 py-1 rounded-full bg-web3-gray/50 text-web3-cyan text-sm font-medium mb-4">
+                    域名铸造
+                </div>
+                <h2 class="text-[clamp(1.5rem,5vw,3rem)] font-bold mb-6">
+                    铸造您的<span class="bg-gradient-to-r from-web3-blue to-web3-purple text-gradient">.OKB域名</span>
+                </h2>
+                <p class="text-gray-400 text-lg">
+                    简单几步，拥有属于您的去中心化身份
+                </p>
+            </div>
+            
+            <div class="max-w-2xl mx-auto glass-effect border border-web3-light-gray/20 rounded-xl p-8 animate-on-scroll">
+                <div class="mb-8">
+                    <button id="connectButton" class="w-full py-4 rounded-lg bg-gradient-to-r from-web3-blue to-web3-purple text-white font-medium btn-glow transition-all text-lg">
+                        连接钱包
+                    </button>
+                    <p class="status mt-4 text-gray-400">钱包地址: <span id="walletAddress" class="text-web3-blue font-medium">未连接</span></p>
+                    <div id="networkStatus" class="status mt-2 text-gray-400">点击连接钱包...</div>
+                </div>
+                
+                <div class="space-y-6">
+                    <input type="text" id="domainId" placeholder="输入域名ID（例如：jace123）" oninput="convertToHex()" 
+                        class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white">
+                    
+                    <div class="p-4 rounded-lg bg-web3-gray/30 border border-web3-light-gray/20">
+                        <label class="block text-sm text-web3-cyan mb-2">Hex 数据</label>
+                        <span id="hexOutputText" class="text-gray-300 break-all">请输入域名以查看 Hex 数据</span>
+                    </div>
+                    
+                    <button id="copyHexButton" class="w-full py-3 rounded-lg bg-web3-gray hover:bg-web3-gray/70 text-white font-medium transition-all" disabled>
+                        复制 Hex 数据
+                    </button>
+                    
+                    <div class="p-4 rounded-lg bg-web3-gray/30 border border-web3-light-gray/20">
+                        <label class="block text-sm text-web3-cyan mb-2">合约地址</label>
+                        <span id="contractAddress" class="text-gray-300 break-all">0xBf13Ed020DCF22bc8216A23A1167A5dD1fDC2D0E</span>
+                    </div>
+                    
+                    <button id="copyAddressButton" class="w-full py-3 rounded-lg bg-web3-gray hover:bg-web3-gray/70 text-white font-medium transition-all">
+                        复制合约地址
+                    </button>
+                    
+                    <button id="mintDomain" class="w-full py-4 rounded-lg bg-gradient-to-r from-web3-purple to-web3-pink text-white font-medium btn-glow transition-all text-lg">
+                        铸造.OKB域名NFT
+                    </button>
+                    
+                    <div id="mintStatus" class="status text-gray-400"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 relative">
+        <div class="absolute top-0 left-0 w-full h-px glowing-line"></div>
+        
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
+                <div class="inline-block px-3 py-1 rounded-full bg-web3-gray/50 text-web3-cyan text-sm font-medium mb-4">
+                    常见问题
+                </div>
+                <h2 class="text-[clamp(1.5rem,5vw,3rem)] font-bold mb-6">
+                    关于<span class="bg-gradient-to-r from-web3-blue to-web3-purple text-gradient">.OKB的常见问题</span>
+                </h2>
+                <p class="text-gray-400 text-lg">
+                    了解更多关于.OKB域名的信息
+                </p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto space-y-4 animate-on-scroll">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item glass-effect border border-web3-light-gray/20 rounded-xl overflow-hidden">
+                    <div class="faq-question p-6 cursor-pointer">
+                        <span class="text-lg font-medium text-white">什么是.OKB域名？</span>
+                        <i class="fas fa-chevron-down text-web3-blue transition-transform"></i>
+                    </div>
+                    <div class="faq-answer p-6 pt-0 text-gray-400">
+                        <p>
+                            .OKB是XLayer链上的首个域名后缀，作为去中心化身份解决方案，它可以替代复杂的区块链地址，让您用简单易记的.OKB域名接收加密货币付款、访问去中心化应用等。
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 2 -->
+                <div class="faq-item glass-effect border border-web3-light-gray/20 rounded-xl overflow-hidden">
+                    <div class="faq-question p-6 cursor-pointer">
+                        <span class="text-lg font-medium text-white">为什么.OKB比.ETH和.BTC更好？</span>
+                        <i class="fas fa-chevron-down text-web3-blue transition-transform"></i>
+                    </div>
+                    <div class="faq-answer p-6 pt-0 text-gray-400">
+                        <p>
+                            .OKB提供了更低的注册费用(0.01USDT起)、永久免费的拥有权、完整的去中心化以及深度整合OKEX和XLayer生态的优势。相比之下，.ETH和.BTC域名通常需要更高的费用和定期续费。
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 3 -->
+                <div class="faq-item glass-effect border border-web3-light-gray/20 rounded-xl overflow-hidden">
+                    <div class="faq-question p-6 cursor-pointer">
+                        <span class="text-lg font-medium text-white">如何注册.OKB域名？</span>
+                        <i class="fas fa-chevron-down text-web3-blue transition-transform"></i>
+                    </div>
+                    <div class="faq-answer p-6 pt-0 text-gray-400">
+                        <p>
+                            注册.OKB域名非常简单：1) 连接您的加密货币钱包 2) 搜索您想要的域名 3) 确认可用后支付极低的Gas费用 4) 完成注册并获得永久所有权。
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 4 -->
+                <div class="faq-item glass-effect border border-web3-light-gray/20 rounded-xl overflow-hidden">
+                    <div class="faq-question p-6 cursor-pointer">
+                        <span class="text-lg font-medium text-white">.OKB域名有哪些用途？</span>
+                        <i class="fas fa-chevron-down text-web3-blue transition-transform"></i>
+                    </div>
+                    <div class="faq-answer p-6 pt-0 text-gray-400">
+                        <p>
+                            .OKB域名可以用于：简化加密支付地址、作为去中心化身份、访问DApps、托管去中心化网站、NFT身份验证等多种Web3.0应用场景。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="py-20 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full bg-grid opacity-50"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-r from-web3-blue/20 to-web3-purple/20 blur-3xl"></div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-4xl mx-auto glass-effect border border-web3-blue/30 rounded-2xl p-10 md:p-16 text-center animate-on-scroll clip-polygon">
+                <h2 class="text-[clamp(1.5rem,5vw,3rem)] font-bold mb-6">
+                    准备好拥有您的<span class="bg-gradient-to-r from-web3-blue to-web3-purple text-gradient">.OKB域名</span>了吗？
+                </h2>
+                <p class="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+                    立即注册您独一无二的.OKB域名，开启去中心化身份的新篇章。一次注册，永久拥有。
+                </p>
+                <button onclick="scrollToMintSection()" class="bg-gradient-to-r from-web3-blue to-web3-purple text-white px-10 py-4 rounded-lg font-semibold text-lg btn-glow transition-all">
+                    立即注册
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-web3-darker pt-16 pb-8 relative">
+        <div class="absolute top-0 left-0 w-full h-px glowing-line"></div>
+        
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-16">
+                <div class="md:col-span-1">
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-web3-blue to-web3-purple flex items-center justify-center">
+                            <i class="fas fa-globe text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold bg-gradient-to-r from-web3-blue to-web3-purple text-gradient">.OKB</span>
+                    </div>
+                    <p class="text-gray-400 mb-6">
+                        XLayer链首个域名后缀，为您提供完全去中心化的数字身份解决方案。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://x.com/okbdomainname" target="_blank" class="w-10 h-10 rounded-full bg-web3-gray/50 flex items-center justify-center text-gray-400 hover:text-web3-blue hover:bg-web3-gray/80 transition-all">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://t.me/OKBdomainGroup" target="_blank" class="w-10 h-10 rounded-full bg-web3-gray/50 flex items-center justify-center text-gray-400 hover:text-web3-blue hover:bg-web3-gray/80 transition-all">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="https://github.com/WoofingLabs" target="_blank" class="w-10 h-10 rounded-full bg-web3-gray/50 flex items-center justify-center text-gray-400 hover:text-web3-blue hover:bg-web3-gray/80 transition-all">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://x.com/WoofingJace" target="_blank" class="w-10 h-10 rounded-full bg-web3-gray/50 flex items-center justify-center text-gray-400 hover:text-web3-blue hover:bg-web3-gray/80 transition-all">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-web3-light-gray/20 pt-8">
+                <p class="text-gray-500 text-sm text-center max-w-3xl mx-auto">
+                    以上内容仅供参考。投资涉及风险，您应当充分了解相关风险并自行做出投资决策。本网站不对您的投资行为承担任何责任。
+                </p>
+                <p class="text-gray-600 text-xs text-center mt-6">
+                    © 2023 .OKB Name. 保留所有权利。
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // 初始化粒子效果
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 60,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": ["#0EA5E9", "#8B5CF6", "#EC4899"]
+                },
+                "shape": {
+                    "type": "circle"
+                },
+                "opacity": {
+                    "value": 0.1,
+                    "random": true
+                },
+                "size": {
+                    "value": 3,
+                    "random": true
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#0EA5E9",
+                    "opacity": 0.05,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 1,
+                    "direction": "none",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 0.1
+                        }
+                    },
+                    "push": {
+                        "particles_nb": 3
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+
+        // 滚动动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const animateElements = document.querySelectorAll('.animate-on-scroll');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            animateElements.forEach(element => {
+                observer.observe(element);
+            });
+        });
+
+        // FAQ 交互
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentNode;
+                const icon = question.querySelector('.fas.fa-chevron-down');
+                
+                // 关闭其他所有打开的FAQ项
+                document.querySelectorAll('.faq-item').forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                        otherItem.querySelector('.fas.fa-chevron-down').style.transform = 'rotate(0deg)';
+                    }
+                });
+                
+                // 切换当前FAQ项
+                item.classList.toggle('active');
+                if (item.classList.contains('active')) {
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+
+        // 滚动到铸造区域
+        function scrollToMintSection() {
+            const mintSection = document.getElementById('mint-section');
+            if (mintSection) {
+                window.scrollTo({
+                    top: mintSection.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // 铸造功能代码
+        let web3, accounts, domainContract;
+        const okbContract = {
+            address: '0xBf13Ed020DCF22bc8216A23A1167A5dD1fDC2D0E',
+            suffix: 'okb',
+            protocol: 'okbname',
+            currency: 'OKB',
+            name: 'OKB Inscription Domain Name',
+            symbol: 'DOKB'
+        };
+        const domainContractABI = [
+            {"inputs":[{"internalType":"string","name":"_id","type":"string"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+            {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"minter","type":"address"},{"indexed":false,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":false,"internalType":"string","name":"id","type":"string"}],"name":"Minted","type":"event"},
+            {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenName","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"tokenOfOwnerByIndex","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"SUFFIX","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"idsMintedLower","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"ownerToTokenId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}
+        ];
+        const xLayer = {
+            chainId: 196,
+            name: 'X Layer mainnet',
+            explorerUrl: 'https://www.okx.com/web3/explorer/xlayer',
+            rpcUrl: 'https://rpc.xlayer.tech'
+        };
+
+        async function connectWallet() {
+            const status = document.getElementById('networkStatus');
+            try {
+                if (!window.ethereum) {
+                    status.innerHTML = '未检测到钱包，请安装 <a href="https://metamask.io" target="_blank" class="text-web3-blue">MetaMask</a>。';
+                    throw new Error("未检测到钱包");
+                }
+                status.innerText = "正在连接...";
+                web3 = new Web3(window.ethereum);
+                accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (!accounts.length) throw new Error("请解锁您的钱包或连接钱包。");
+                const chainId = await web3.eth.getChainId();
+                if (chainId !== 196) {
+                    try {
+                        await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xc4' }] });
+                    } catch (switchError) {
+                        if (switchError.code === 4902) {
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: '0xc4',
+                                    chainName: 'X Layer mainnet',
+                                    nativeCurrency: { name: 'OKB', symbol: 'OKB', decimals: 18 },
+                                    rpcUrls: ['https://rpc.xlayer.tech'],
+                                    blockExplorerUrls: ['https://www.okx.com/web3/explorer/xlayer']
+                                }]
+                            });
+                        } else throw switchError;
+                    }
+                }
+                document.getElementById('walletAddress').innerText = `${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
+                domainContract = new web3.eth.Contract(domainContractABI, okbContract.address);
+                status.innerText = "已连接到 X Layer";
+            } catch (error) {
+                console.error(error);
+                status.innerText = "连接失败: " + error.message;
+            }
+        }
+
+        function isValidString(str) {
+            const strBytes = new TextEncoder().encode(str);
+            if (strBytes.length === 0 || strBytes.length > 15) return false;
+            for (let i = 0; i < strBytes.length; i++) {
+                const char = strBytes[i];
+                if (!(char >= 48 && char <= 57) && !(char >= 65 && char <= 90) && !(char >= 97 && char <= 122)) return false;
+            }
+            return true;
+        }
+
+        function convertToHex() {
+            const input = document.getElementById('domainId').value.trim();
+            const output = document.getElementById('hexOutputText');
+            const status = document.getElementById('mintStatus');
+            const copyHexButton = document.getElementById('copyHexButton');
+
+            if (!input) {
+                output.textContent = '请输入域名以查看 Hex 数据';
+                output.dataset.hex = '';
+                status.textContent = '';
+                copyHexButton.disabled = true;
+                return;
+            }
+
+            if (!isValidString(input)) {
+                output.textContent = '无效输入：仅限字母和数字，1-15个字符';
+                output.dataset.hex = '';
+                status.textContent = '无效输入';
+                copyHexButton.disabled = true;
+                return;
+            }
+
+            const inscription = `data:,{"p":"${okbContract.protocol}","op":"reg","name":"${input}.${okbContract.suffix}"}`;
+            const hexData = '0x' + Array.from(new TextEncoder().encode(inscription)).map(byte => byte.toString(16).padStart(2, '0')).join('');
+            output.textContent = hexData;
+            output.dataset.hex = hexData;
+            status.textContent = `已生成 ${input}.${okbContract.suffix} 的 Hex 数据`;
+            copyHexButton.disabled = false;
+        }
+
+        function copyToClipboard(type) {
+            const status = document.getElementById('mintStatus');
+            let textToCopy;
+            let sourceElement;
+
+            if (type === 'hex') {
+                sourceElement = document.getElementById('hexOutputText');
+                textToCopy = sourceElement.dataset.hex || '';
+            } else {
+                sourceElement = document.getElementById('contractAddress');
+                textToCopy = sourceElement.textContent;
+            }
+
+            if (!textToCopy || textToCopy === '请输入域名以查看 Hex 数据' || textToCopy === '无效输入：仅限字母和数字，1-15个字符') {
+                status.textContent = `无可复制的${type === 'hex' ? 'Hex 数据' : '合约地址'}`;
+                return;
+            }
+
+            const textArea = document.createElement('textarea');
+            textArea.value = textToCopy;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                status.textContent = `${type === 'hex' ? 'Hex 数据' : '合约地址'} 已复制到剪贴板`;
+            } catch (error) {
+                console.error(`复制 ${type} 失败:`, error);
+                status.textContent = `无法复制${type === 'hex' ? 'Hex 数据' : '合约地址'}，请手动复制。`;
+            } finally {
+                document.body.removeChild(textArea);
+            }
+        }
+
+        async function mintDomain() {
+            const section = document.getElementById('mint-section');
+            const status = document.getElementById('mintStatus');
+            const domainId = document.getElementById('domainId').value.trim();
+            if (!domainId || domainId.length > 15 || !/^[a-zA-Z0-9]+$/.test(domainId)) {
+                status.innerText = "无效域名ID，仅限1-15个字母或数字。";
+                return;
+            }
+            if (!accounts) {
+                status.innerText = "请先连接您的钱包！";
+                return;
+            }
+            try {
+                section.classList.add('opacity-70');
+                status.innerText = "正在检查域名可用性...";
+                const domainIdLower = domainId.toLowerCase();
+                const isMinted = await domainContract.methods.idsMintedLower(domainIdLower).call();
+                if (isMinted) {
+                    status.innerText = "此域名ID已被铸造！";
+                    section.classList.remove('opacity-70');
+                    return;
+                }
+                const hasMinted = await domainContract.methods.ownerToTokenId(accounts[0]).call();
+                if (hasMinted != 0) {
+                    status.innerText = "此地址已铸造过一个域名！";
+                    section.classList.remove('opacity-70');
+                    return;
+                }
+                status.innerText = "正在铸造域名NFT...";
+                const gas = await domainContract.methods.mint(domainId).estimateGas({ from: accounts[0] }).catch(() => 600000);
+                const tx = await domainContract.methods.mint(domainId).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
+                status.innerHTML = `域名铸造成功！Token ID: ${tx.events.Minted.returnValues.tokenId} (<a href="${xLayer.explorerUrl}/token/${okbContract.address}?a=${tx.events.Minted.returnValues.tokenId}" target="_blank" class="text-web3-blue">在浏览器查看</a>)`;
+                document.getElementById('domainId').value = '';
+            } catch (error) {
+                console.error(error);
+                status.innerText = "铸造失败: " + (error.message.includes('revert') ? error.message.split('revert')[1]?.trim() || '未知原因' : error.message);
+            } finally {
+                section.classList.remove('opacity-70');
+            }
+        }
+
+        // 事件监听
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('copyHexButton').disabled = true;
+            document.getElementById('copyAddressButton').disabled = false;
+            document.getElementById('connectButton').addEventListener('click', connectWallet);
+            document.getElementById('mintDomain').addEventListener('click', mintDomain);
+            document.getElementById('copyHexButton').addEventListener('click', () => copyToClipboard('hex'));
+            document.getElementById('copyAddressButton').addEventListener('click', () => copyToClipboard('address'));
+            
+            if (!window.location.protocol.startsWith('http')) {
+                document.getElementById('networkStatus').innerHTML = '点击连接钱包...';
+            } else if (!window.ethereum) {
+                document.getElementById('networkStatus').innerHTML = '未检测到钱包，请安装 <a href="https://metamask.io" class="text-web3-blue">MetaMask</a>。';
+            }
+        });
+    </script>
+</body>
+</html>
+    

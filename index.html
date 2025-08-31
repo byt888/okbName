@@ -665,7 +665,7 @@
                     </button>
                     
                     <button id="mintDomain" class="w-full py-4 rounded-lg bg-gradient-to-r from-web3-purple to-web3-pink text-white font-medium btn-glow transition-all text-lg">
-                        铸造.OKB域名NFT
+                        铸造.OKB域名
                     </button>
                     
                     <div id="mintStatus" class="status text-gray-400"></div>
@@ -1146,7 +1146,7 @@
                 section.classList.remove('opacity-70');
                 return;
             }
-            status.innerText = "正在铸造域名NFT...";
+            status.innerText = "正在铸造域名...";
             const gas = await domainContract.methods.mint(domainId).estimateGas({ from: accounts[0] }).catch(() => 600000);
             const tx = await domainContract.methods.mint(domainId).send({ from: accounts[0], gas: Math.floor(gas * 1.2) });
             status.innerHTML = `域名铸造成功！Token ID: ${tx.events.Minted.returnValues.tokenId} (<a href="${xLayer.explorerUrl}/token/${okbContract.address}?a=${tx.events.Minted.returnValues.tokenId}" target="_blank" class="text-web3-blue">在浏览器查看</a>)`;

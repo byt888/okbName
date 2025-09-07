@@ -1,1 +1,384 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X Layer Web Browser</title>
+    <base href="/web3/">
+    <link rel="icon" href="https://swap.woofingjace.com/image/header/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #121212;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .logo {
+            width: 120px;
+            height: 60px;
+            object-fit: contain;
+            margin: 8px 16px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .browser-bar {
+            background: #1e1e1e;
+            padding: 8px 16px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            height: 56px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .nav-buttons {
+            margin-right: 16px;
+        }
+        .nav-buttons button {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 6px 12px;
+            margin: 0 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #ffffff;
+            height: 32px;
+            min-width: 60px;
+            transition: background 0.2s ease;
+        }
+        .nav-buttons button:hover {
+            background: #3a3a3a;
+        }
+        .nav-buttons button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+        .address-bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 4px 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .address-bar input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            padding: 6px;
+            background: transparent;
+            color: #ffffff;
+        }
+        .address-bar input::placeholder {
+            color: #999;
+        }
+        .address-bar button {
+            background: #1e88e5;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            height: 32px;
+            min-width: 60px;
+            transition: background 0.2s ease;
+        }
+        .address-bar button:hover {
+            background: #1565c0;
+        }
+        .browser-content {
+            width: 100%;
+            height: calc(100vh - 64px);
+            border: none;
+            overflow: hidden;
+            background: #000;
+        }
+        .status {
+            font-size: 14px;
+            color: #ff5252;
+            text-align: center;
+            padding: 12px;
+        }
+        .footer {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #b0b0b0;
+            text-align: center;
+        }
+        .footer a {
+            color: #64b5f6;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .browser-bar {
+                flex-direction: column;
+                padding: 8px;
+                height: auto;
+            }
+            .nav-buttons {
+                margin-bottom: 8px;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+            }
+            .nav-buttons button {
+                flex: 1;
+                margin: 0 2px;
+            }
+            .address-bar {
+                width: 100%;
+                margin-top: 8px;
+            }
+            .browser-content {
+                height: calc(100vh - 104px);
+            }
+            .logo {
+                width: 80px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="browser-bar">
+            <img src="https://swap.woofingjace.com/image/header/logo.png" alt="X Layer Web Browser" class="logo">
+            <div class="nav-buttons">
+                <button id="backButton" disabled>Back</button>
+                <button id="forwardButton" disabled>Forward</button>
+                <button id="refreshButton">Refresh</button>
+            </div>
+            <div class="address-bar">
+                <input type="text" id="domainInput" placeholder="Enter domain (e.g., 0.OKX)">
+                <button id="searchButton">Go</button>
+            </div>
+        </div>
+        <iframe id="browserContent" class="browser-content" src="about:blank"></iframe>
+        <div id="status" class="status"></div>
+        <div class="footer">
+            Powered by <a href="https://www.okx.com/web3/explorer/xlayer" target="_blank">X Layer</a> | Browser © 2025
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+    <script>
+        const resolverContractAddress = '0x323CE1459B33ad71c8997db945Bd690dF07166F0';
+        const xLayer = { explorerUrl: 'https://www.okx.com/web3/explorer/xlayer', rpcUrl: 'https://rpc.xlayer.tech' };
+        const web3 = new Web3(xLayer.rpcUrl);
+        const resolverContract = new web3.eth.Contract([
+            {"inputs":[{"internalType":"string","name":"domainName","type":"string"}],"name":"getWalletByDomain","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"string","name":"domainName","type":"string"}],"name":"getUrlByDomain","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"string","name":"domainName","type":"string"}],"name":"getTextByDomain","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"string","name":"domainName","type":"string"}],"name":"isDomainResolved","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}
+        ], resolverContractAddress);
+
+        const contracts = {
+            'okb': '0xBf13Ed020DCF22bc8216A23A1167A5dD1fDC2D0E',
+            'star': '0xfD809E6c00b7ABD737C3FaDFCaFAF4b6564AF9dD',
+            'xdog': '0x68B6387628b4096af034c3a9de3073AB18E744C2',
+            'xlayer': '0x70fda345B815EbfceE5a20858F5115126Ca2abF7',
+            'OKX': '0xC3ad7bD7e434F4C1C023EbC6fe0AC4705e9518bC', // Supports alphanumeric
+            'OKX': '0x204fF780E126ADa44B5665a9cBC66925264c8dcB'  // Supports Chinese only
+        };
+
+        function isAlphanumeric(str) {
+            return /^[a-zA-Z0-9]+$/.test(str);
+        }
+
+        function isChineseOnly(str) {
+            return /^[\u4e00-\u9fa5]+$/.test(str);
+        }
+
+        function normalizeSuffix(suffix) {
+            const lowerCaseSuffixes = ['okb', 'star', 'xdog', 'xlayer'];
+            return lowerCaseSuffixes.includes(suffix.toLowerCase()) ? suffix.toLowerCase() : (suffix.toLowerCase() === 'okx' ? 'OKX' : suffix);
+        }
+
+        let history = [];
+        let currentIndex = -1;
+
+        async function navigateToUrl(domainInput) {
+            const iframe = document.getElementById('browserContent');
+            const domainInputField = document.getElementById('domainInput');
+            const status = document.getElementById('status');
+            const backButton = document.getElementById('backButton');
+            const forwardButton = document.getElementById('forwardButton');
+
+            if (!domainInput) {
+                status.innerText = "No domain provided. Please enter a valid domain (e.g., 0.OKX).";
+                iframe.src = 'about:blank';
+                return;
+            }
+
+            const parts = domainInput.split('.');
+            if (parts.length < 2) {
+                status.innerText = "Invalid domain format. Please include a suffix (e.g., 0.OKX).";
+                iframe.src = 'about:blank';
+                return;
+            }
+            const prefix = parts.slice(0, -1).join('.');
+            let suffix = parts[parts.length - 1];
+            suffix = normalizeSuffix(suffix);
+            const normalizedDomain = prefix + '.' + suffix;
+
+            try {
+                const supportedSuffixes = ['okb', 'star', 'xdog', 'xlayer', 'OKX'];
+                if (!supportedSuffixes.includes(suffix)) {
+                    status.innerText = `Unsupported domain suffix. Supported suffixes: ${supportedSuffixes.join(', ')}.`;
+                    iframe.src = 'about:blank';
+                    return;
+                }
+
+                let contractAddress;
+                if (suffix === 'OKX') {
+                    if (isChineseOnly(prefix)) {
+                        contractAddress = '0x204fF780E126ADa44B5665a9cBC66925264c8dcB';
+                    } else if (prefix && !isAlphanumeric(prefix)) {
+                        status.innerText = "OKX domain prefix must be alphanumeric.";
+                        iframe.src = 'about:blank';
+                        return;
+                    } else {
+                        contractAddress = '0xC3ad7bD7e434F4C1C023EbC6fe0AC4705e9518bC';
+                    }
+                } else {
+                    contractAddress = contracts[suffix.toLowerCase()];
+                }
+
+                const isResolved = await resolverContract.methods.isDomainResolved(normalizedDomain).call();
+                if (!isResolved) {
+                    status.innerText = `No resolution record found for domain "${normalizedDomain}".`;
+                    iframe.src = 'about:blank';
+                    return;
+                }
+
+                const url = await resolverContract.methods.getUrlByDomain(normalizedDomain).call();
+                if (!url || url === "") {
+                    status.innerText = "No valid URL found.";
+                    iframe.src = 'about:blank';
+                    return;
+                }
+
+                if (currentIndex < history.length - 1) {
+                    history = history.slice(0, currentIndex + 1);
+                }
+                history.push(normalizedDomain);
+                currentIndex++;
+
+                domainInputField.value = normalizedDomain;
+                iframe.src = url;
+                status.innerText = "";
+                backButton.disabled = currentIndex <= 0;
+                forwardButton.disabled = currentIndex >= history.length - 1;
+
+                window.history.replaceState({}, '', `/web3/?domain=${encodeURIComponent(normalizedDomain)}`);
+            } catch (error) {
+                console.error("Error details:", error);
+                status.innerText = "Query failed: " + (error.message.includes('revert') ? error.message.split('revert')[1]?.trim() || 'Unknown reason' : error.message);
+                iframe.src = 'about:blank';
+            }
+        }
+
+        function goBack() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                const domain = history[currentIndex];
+                document.getElementById('domainInput').value = domain;
+                navigateToUrl(domain);
+                updateNavigationButtons();
+            }
+        }
+
+        function goForward() {
+            if (currentIndex < history.length - 1) {
+                currentIndex++;
+                const domain = history[currentIndex];
+                document.getElementById('domainInput').value = domain;
+                navigateToUrl(domain);
+                updateNavigationButtons();
+            }
+        }
+
+        function refresh() {
+            const iframe = document.getElementById('browserContent');
+            if (iframe.src !== 'about:blank') {
+                iframe.contentWindow.location.reload();
+            }
+        }
+
+        function updateNavigationButtons() {
+            const backButton = document.getElementById('backButton');
+            const forwardButton = document.getElementById('forwardButton');
+            backButton.disabled = currentIndex <= 0;
+            forwardButton.disabled = currentIndex >= history.length - 1;
+        }
+
+        function parseUrlAndLoad() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let domain = '';
+
+            if (urlParams.has('domain')) {
+                domain = decodeURIComponent(urlParams.get('domain'));
+            }
+
+            if (domain) {
+                document.getElementById('domainInput').value = domain;
+                navigateToUrl(domain);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const domainInput = document.getElementById('domainInput');
+            const searchButton = document.getElementById('searchButton');
+            const backButton = document.getElementById('backButton');
+            const forwardButton = document.getElementById('forwardButton');
+            const refreshButton = document.getElementById('refreshButton');
+
+            searchButton.addEventListener('click', () => {
+                const domainInputValue = domainInput.value.trim();
+                navigateToUrl(domainInputValue);
+            });
+
+            domainInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const domainInputValue = domainInput.value.trim();
+                    navigateToUrl(domainInputValue);
+                }
+            });
+
+            backButton.addEventListener('click', goBack);
+            forwardButton.addEventListener('click', goForward);
+            refreshButton.addEventListener('click', refresh);
+
+            parseUrlAndLoad();
+        });
+    </script>
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"e73b454b9e794bdbbb76a784c9565c07","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97ad33b8fef85ead',t:'MTc1NzE1MzY5Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>

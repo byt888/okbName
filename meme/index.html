@@ -54,18 +54,15 @@
     <style>
         body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
         #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; pointer-events: none; }
-        .btn-glow:hover { box-shadow: 0 0 15px theme('colors.web3-blue'), 0 0 30px rgba(14, 165, 233, 0.5); transform: translateY(-2px); }
+        .btn-glow:hover:not(:disabled) { box-shadow: 0 0 15px theme('colors.web3-blue'), 0 0 30px rgba(14, 165, 233, 0.5); transform: translateY(-2px); }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: theme('colors.web3-darker'); }
         ::-webkit-scrollbar-thumb { background: theme('colors.web3-gray'); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: theme('colors.web3-blue'); }
         button:disabled {
-            filter: grayscale(1);
+            filter: grayscale(0.5);
             opacity: 0.6;
             cursor: not-allowed;
-        }
-        #progressBar {
-            max-width: 100%;
         }
     </style>
 </head>
@@ -74,8 +71,8 @@
     <div class="container mx-auto px-4 py-8">
         <header class="flex flex-col md:flex-row justify-between items-center mb-8 glass-effect border border-web3-light-gray/20 rounded-xl p-4">
             <img src="https://swap.woofingjace.com/image/header/logo.png" alt="JaceFun OKX" class="h-12 mb-4 md:mb-0">
-            <div class="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
-                <div class="flex-grow w-full md:w-auto flex items-center glass-effect border border-web3-light-gray/20 rounded-lg px-3">
+            <div class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+                <div class="flex-grow w-full md:w-auto flex items-center glass-effect border border-web3-light-gray/30 rounded-lg px-3">
                     <i class="fas fa-search text-gray-400"></i>
                     <input type="text" id="contractInput" placeholder="Enter token contract address" class="w-full bg-transparent border-none focus:outline-none text-white p-3">
                     <button id="searchButton" class="bg-gradient-to-r from-web3-blue to-web3-cyan text-white px-4 py-2 rounded-lg font-medium btn-glow transition-all text-sm">Search</button>
@@ -85,7 +82,7 @@
         </header>
 
         <main class="w-full">
-            <div id="status" class="text-center text-web3-pink mb-4"></div>
+            <div id="status" class="text-center text-web3-pink mb-4 min-h-[1.25rem]"></div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-1 space-y-8">
@@ -96,12 +93,12 @@
                         <div id="tokenInfo" class="hidden space-y-4">
                             <div id="tokenDetails" class="text-center text-gray-300"></div>
                             <div id="progressResult" class="text-center text-gray-400 text-sm"></div>
-                            <div class="w-full bg-web3-gray rounded-full h-2.5 border border-web3-light-gray/30"><div id="progressBar" class="bg-web3-blue h-2 rounded-full" style="width: 0%;"></div></div>
+                            <div class="w-full bg-web3-gray rounded-full h-2.5 border border-web3-light-gray/30"><div id="progressBar" class="bg-web3-blue h-2 rounded-full transition-all duration-500" style="width: 0%;"></div></div>
                             
-                            <div class="grid grid-cols-1 lg:grid-cols-1 gap-6 pt-4">
+                            <div class="grid grid-cols-1 gap-6 pt-4">
                                 <div class="space-y-4">
                                     <h3 class="text-lg font-semibold text-white">Buy Tokens</h3>
-                                    <label for="buyAmount" class="block text-sm text-web3-cyan mb-1">Amount (OKB): <span id="okbBalance" class="text-gray-400 text-xs"></span></label>
+                                    <label class="block text-sm text-web3-cyan mb-1">Amount (OKB): <span id="okbBalance" class="text-gray-400 text-xs"></span></label>
                                     <input type="number" id="buyAmount" placeholder="0.0" step="0.0001" disabled class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white">
                                     <div class="flex gap-2">
                                         <button onclick="setPercent(25, 'buy')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">25%</button>
@@ -109,14 +106,11 @@
                                         <button onclick="setPercent(75, 'buy')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">75%</button>
                                         <button onclick="setPercent(100, 'buy')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">Max</button>
                                     </div>
-                                    <button id="buyButton" onclick="buyTokens()" disabled class="w-full py-3 rounded-lg bg-gradient-to-r from-web3-blue to-web3-cyan text-white font-medium btn-glow transition-all">
-                                        Buy Tokens
-                                        <span class="text-[10px] ml-2 text-gray-500">（连接钱包后可用）</span>
-                                    </button>
+                                    <button id="buyButton" onclick="buyTokens()" disabled class="w-full py-3 rounded-lg bg-gradient-to-r from-web3-blue to-web3-cyan text-white font-medium btn-glow transition-all">Buy Tokens</button>
                                 </div>
                                 <div class="space-y-4">
                                     <h3 class="text-lg font-semibold text-white">Sell Tokens</h3>
-                                    <label for="sellAmount" class="block text-sm text-web3-cyan mb-1">Amount (Tokens): <span id="tokenBalance" class="text-gray-400 text-xs"></span></label>
+                                    <label class="block text-sm text-web3-cyan mb-1">Amount (Tokens): <span id="tokenBalance" class="text-gray-400 text-xs"></span></label>
                                     <input type="number" id="sellAmount" placeholder="0.0" step="0.0001" disabled class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white">
                                     <div class="flex gap-2">
                                         <button onclick="setPercent(25, 'sell')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">25%</button>
@@ -124,55 +118,34 @@
                                         <button onclick="setPercent(75, 'sell')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">75%</button>
                                         <button onclick="setPercent(100, 'sell')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">Max</button>
                                     </div>
-                                    <button id="sellButton" onclick="sellTokens()" disabled class="w-full py-3 rounded-lg bg-gradient-to-r from-web3-pink to-web3-purple text-white font-medium btn-glow transition-all">
-                                        Sell Tokens
-                                        <span class="text-[10px] ml-2 text-gray-500">（连接钱包后可用）</span>
-                                    </button>
+                                    <button id="sellButton" onclick="sellTokens()" disabled class="w-full py-3 rounded-lg bg-gradient-to-r from-web3-pink to-web3-purple text-white font-medium btn-glow transition-all">Sell Tokens</button>
                                 </div>
                             </div>
-                            <div id="transactionStatus" class="text-center text-sm text-gray-400 pt-4"></div>
+                            <div id="transactionStatus" class="text-center text-sm text-gray-400 pt-4 min-h-[1.25rem]"></div>
                         </div>
                     </div>
-                    
                     <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
                         <h2 class="text-xl font-bold mb-4 text-white">Create Meme Token</h2>
                         <div class="space-y-4">
-                            <div>
-                                <label for="tokenName" class="block text-sm text-web3-cyan mb-2">Token Name:</label>
-                                <input type="text" id="tokenName" placeholder="Enter token name" disabled class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white">
-                            </div>
-                            <div>
-                                <label for="tokenSymbol" class="block text-sm text-web3-cyan mb-2">Token Symbol:</label>
-                                <input type="text" id="tokenSymbol" placeholder="Enter token symbol" disabled class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white">
-                            </div>
-                            <button id="createToken" onclick="createToken()" disabled class="w-full py-3 rounded-lg bg-gradient-to-r from-web3-purple to-web3-pink text-white font-medium btn-glow transition-all">
-                                Create Token
-                                <span class="text-[10px] ml-2 text-gray-500">（连接钱包后可用）</span>
-                            </button>
-                            <div id="createTokenStatus" class="text-center text-sm text-gray-400 pt-2"></div>
+                            <div><label for="tokenName" class="block text-sm text-web3-cyan mb-2">Token Name:</label><input type="text" id="tokenName" placeholder="Connect wallet to enable" disabled class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white"></div>
+                            <div><label for="tokenSymbol" class="block text-sm text-web3-cyan mb-2">Token Symbol:</label><input type="text" id="tokenSymbol" placeholder="Connect wallet to enable" disabled class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white"></div>
+                            <button id="createToken" onclick="createToken()" disabled class="w-full py-3 rounded-lg bg-gradient-to-r from-web3-purple to-web3-pink text-white font-medium btn-glow transition-all">Create Token</button>
+                            <div id="createTokenStatus" class="text-center text-sm text-gray-400 pt-2 min-h-[1.25rem]"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="lg:col-span-2 space-y-8">
-                    <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
-                        <h2 class="text-xl font-bold mb-4 text-white">Wallet Status</h2>
-                        <div id="walletStatus" class="text-center text-gray-400">Not Connected</div>
-                    </div>
-                    <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6 flex flex-col" style="max-height: calc(100vh - 300px); height: auto;">
+                    <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6"><h2 class="text-xl font-bold mb-4 text-white">Wallet Status</h2><div id="walletStatus" class="text-center text-gray-400">Not Connected</div></div>
+                    <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6 flex flex-col" style="height: calc(100vh - 200px);">
                         <h2 class="text-xl font-bold mb-4 text-white flex-shrink-0">Token List</h2>
-                        <div class="flex-grow overflow-y-auto pr-2">
-                            <div id="tokenList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
-                        </div>
+                        <div class="flex-grow overflow-y-auto pr-2"><div id="tokenList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div></div>
                     </div>
                 </div>
             </div>
         </main>
         
-        <footer class="text-center mt-12 py-6 border-t border-web3-light-gray/20">
-            <p class="text-gray-500 text-sm">Powered by <a href="https://x.com/WoofingJace" target="_blank" class="text-web3-blue hover:underline">WoofingJace</a> & <a href="https://www.okx.com/web3/explorer/xlayer" target="_blank" class="text-web3-blue hover:underline">X Layer</a> © 2025</p>
-            <p class="text-gray-600 text-xs mt-2">Not financial advice. Always DYOR!</p>
-        </footer>
+        <footer class="text-center mt-12 py-6 border-t border-web3-light-gray/20"><p class="text-gray-500 text-sm">Powered by <a href="https://x.com/WoofingJace" target="_blank" class="text-web3-blue hover:underline">WoofingJace</a> & <a href="https://www.okx.com/web3/explorer/xlayer" target="_blank" class="text-web3-blue hover:underline">X Layer</a> © 2025</p><p class="text-gray-600 text-xs mt-2">Not financial advice. Always DYOR!</p></footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
@@ -184,7 +157,7 @@
         "retina_detect": true
     });
 
-    let web3, accounts, tokenFactoryContract, tokenContract;
+    let web3, accounts, tokenFactoryContract;
     let currentTokenAddress = '';
     const tokenFactoryAddress = '0xaf704a9d83859504200155eD18DE3C671d7b0ae7';
     const xLayer = { chainId: 196, rpcUrl: 'https://rpc.xlayer.tech' };
@@ -192,45 +165,27 @@
     const tokenABI = [{"constant": true,"inputs": [{"name": "_owner", "type": "address"}],"name": "balanceOf","outputs": [{"name": "balance", "type": "uint256"}],"type": "function"}, {"constant": true,"inputs": [],"name": "totalSupply","outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],"stateMutability": "view","type": "function"}, {"constant": true,"inputs": [],"name": "name","outputs": [{"name": "", "type": "string"}],"stateMutability": "view","type": "function"}, {"constant": true,"inputs": [],"name": "symbol","outputs": [{"name": "", "type": "string"}],"stateMutability": "view","type": "function"}];
 
     async function connectWallet() {
-        const walletStatus = document.getElementById('walletStatus');
-        if (!window.ethereum) { 
-            walletStatus.innerText = 'Please install MetaMask'; 
-            return; 
-        }
+        if (!window.ethereum) { document.getElementById('walletStatus').innerText = 'Please install MetaMask'; return; }
         try {
             web3 = new Web3(window.ethereum);
             await window.ethereum.request({ method: 'eth_requestAccounts' });
             const chainId = await web3.eth.getChainId();
             if (chainId !== xLayer.chainId) {
                 try {
-                    await window.ethereum.request({ 
-                        method: 'wallet_switchEthereumChain', 
-                        params: [{ chainId: web3.utils.toHex(xLayer.chainId) }] 
-                    });
-                } catch (switchError) {
-                    if (switchError.code === 4902) {
-                        await window.ethereum.request({
-                            method: 'wallet_addEthereumChain',
-                            params: [{ 
-                                chainId: web3.utils.toHex(xLayer.chainId), 
-                                chainName: 'X Layer', 
-                                rpcUrls: [xLayer.rpcUrl], 
-                                nativeCurrency: { name: 'OKB', symbol: 'OKB', decimals: 18 }, 
-                                blockExplorerUrls: ['https://www.okx.com/explorer/xlayer'] 
-                            }]
-                        });
-                    } else { throw switchError; }
+                    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: web3.utils.toHex(xLayer.chainId) }] });
+                } catch (e) {
+                    if (e.code === 4902) await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [{ chainId: web3.utils.toHex(xLayer.chainId), chainName: 'X Layer', rpcUrls: [xLayer.rpcUrl], nativeCurrency: { name: 'OKB', symbol: 'OKB', decimals: 18 }, blockExplorerUrls: ['https://www.okx.com/explorer/xlayer'] }] });
+                    else throw e;
                 }
             }
             accounts = await web3.eth.getAccounts();
             tokenFactoryContract = new web3.eth.Contract(tokenFactoryABI, tokenFactoryAddress, { from: accounts[0] });
-            // 显示网络信息
-            walletStatus.innerText = `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)} (X Layer)`;
+            document.getElementById('walletStatus').innerText = `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
             document.getElementById('connectWallet').innerText = "Connected";
             enableInputs(true);
             await updateBalances();
         } catch (error) {
-            walletStatus.innerText = `Connection failed: ${error.message || 'Unknown error'}`;
+            document.getElementById('walletStatus').innerText = `Connection failed: ${error.message || 'Unknown error'}`;
         }
     }
 
@@ -247,11 +202,8 @@
             document.getElementById('buyButton').disabled = !isFunding;
             document.getElementById('sellButton').disabled = !isFunding;
         } else {
-            document.getElementById('buyAmount').disabled = true;
-            document.getElementById('sellAmount').disabled = true;
+            ['buyAmount', 'sellAmount', 'buyButton', 'sellButton'].forEach(id => document.getElementById(id).disabled = true);
             document.querySelectorAll('#tokenInfo .flex.gap-2 button').forEach(b => b.disabled = true);
-            document.getElementById('buyButton').disabled = true;
-            document.getElementById('sellButton').disabled = true;
         }
     }
     
@@ -261,14 +213,11 @@
             const okbBalance = await web3.eth.getBalance(accounts[0]);
             document.getElementById('okbBalance').innerText = `Balance: ${parseFloat(web3.utils.fromWei(okbBalance, 'ether')).toFixed(4)} OKB`;
             if (currentTokenAddress) {
-                const tokenContract = new web3.eth.Contract(tokenABI, currentTokenAddress);
-                const tokenBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
-                const symbol = await tokenContract.methods.symbol().call();
+                const token = new web3.eth.Contract(tokenABI, currentTokenAddress);
+                const [tokenBalance, symbol] = await Promise.all([token.methods.balanceOf(accounts[0]).call(), token.methods.symbol().call()]);
                 document.getElementById('tokenBalance').innerText = `Balance: ${parseFloat(web3.utils.fromWei(tokenBalance, 'ether')).toFixed(4)} ${symbol}`;
             }
-        } catch (error) { 
-            console.error("Failed to update balances:", error); 
-        }
+        } catch (error) { console.error("Balance update failed:", error); }
     }
 
     async function getTokenDetails(index, web3Instance) {
@@ -276,125 +225,150 @@
             const factory = new web3Instance.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
             const tokenAddress = await factory.methods.tokenList(index).call();
             if (tokenAddress === '0x0000000000000000000000000000000000000000') return null;
-            const tokenContractInstance = new web3Instance.eth.Contract(tokenABI, tokenAddress);
+            const token = new web3Instance.eth.Contract(tokenABI, tokenAddress);
             const [name, symbol, totalSupply, collateral, tokenState, fundingGoal] = await Promise.all([
-                tokenContractInstance.methods.name().call(),
-                tokenContractInstance.methods.symbol().call(),
-                tokenContractInstance.methods.totalSupply().call(),
-                factory.methods.collateral(tokenAddress).call(),
-                factory.methods.tokens(tokenAddress).call(),
-                factory.methods.FUNDING_GOAL().call()
+                token.methods.name().call(), token.methods.symbol().call(), token.methods.totalSupply().call(),
+                factory.methods.collateral(tokenAddress).call(), factory.methods.tokens(tokenAddress).call(), factory.methods.FUNDING_GOAL().call()
             ]);
-            
-            // 处理代币卡片点击事件（添加滚动提示）
-            const card = document.createElement('div');
-            card.className = 'glass-effect border border-web3-light-gray/20 rounded-xl p-4 hover:border-web3-blue transition-all cursor-pointer';
-            card.innerHTML = `
-                <h3 class="font-bold text-white">${name} (${symbol})</h3>
-                <p class="text-xs text-gray-400 mt-1" title="${tokenAddress}">
-                    <span class="font-semibold text-web3-cyan/70">Address:</span><br>
-                    ${tokenAddress.slice(0, 10)}...${tokenAddress.slice(-6)}
-                </p>
-                <p class="text-sm mt-2">Total Supply: ${web3.utils.fromWei(totalSupply, 'ether')}</p>
-                <p class="text-sm mt-1">Funding: ${(collateral / fundingGoal * 100).toFixed(2)}%</p>
-            `;
-            card.addEventListener('click', () => {
-                document.getElementById('status').innerText = '跳转到代币详情...';
-                document.getElementById('contractInput').value = tokenAddress;
-                searchToken();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                // 3秒后清除提示
-                setTimeout(() => document.getElementById('status').innerText = '', 3000);
-            });
-            return card;
-        } catch (error) {
-            console.error(`Error fetching token ${index}:`, error);
-            return null;
-        }
-    }
-
-    // 假设原有searchToken函数（补充状态反馈优化）
-    async function searchToken() {
-        const address = document.getElementById('contractInput').value;
-        if (!address) return;
-        try {
-            document.getElementById('transactionStatus').className = 'text-center text-sm text-blue-400 pt-4 font-medium';
-            document.getElementById('transactionStatus').innerText = 'Searching token...';
-            // 原有搜索逻辑...
-            // 搜索成功后更新状态
-            document.getElementById('transactionStatus').className = 'text-center text-sm text-green-400 pt-4 font-medium';
-            document.getElementById('transactionStatus').innerText = 'Token found';
-        } catch (error) {
-            document.getElementById('transactionStatus').className = 'text-center text-sm text-web3-pink pt-4 font-medium';
-            document.getElementById('transactionStatus').innerText = `Search failed: ${error.message}`;
-        }
-    }
-
-    // 假设原有createToken函数（补充倒计时优化）
-    async function createToken() {
-        try {
-            const name = document.getElementById('tokenName').value;
-            const symbol = document.getElementById('tokenSymbol').value;
-            document.getElementById('createTokenStatus').className = 'text-center text-sm text-blue-400 pt-2 font-medium';
-            document.getElementById('createTokenStatus').innerText = 'Creating token...';
-            
-            // 原有创建逻辑...
-            const newTokenAddress = await tokenFactoryContract.methods.createToken(name, symbol).send();
-            
-            // 创建成功后倒计时刷新
-            document.getElementById('createTokenStatus').className = 'text-center text-sm text-green-400 pt-2 font-medium';
-            let countdown = 8;
-            const updateCountdown = () => {
-                document.getElementById('createTokenStatus').innerText = `Token created! Refreshing in ${countdown}s...`;
-                countdown--;
-                if (countdown >= 0) {
-                    setTimeout(updateCountdown, 1000);
-                } else {
-                    fetchTokenList(web3);
-                    document.getElementById('createTokenStatus').innerText = 'Token created successfully!';
-                }
-            };
-            updateCountdown();
-        } catch (error) {
-            document.getElementById('createTokenStatus').className = 'text-center text-sm text-web3-pink pt-2 font-medium';
-            document.getElementById('createTokenStatus').innerText = `Creation failed: ${error.message}`;
-        }
-    }
-
-    // 补充缺失的函数声明（保持功能完整性）
-    function setPercent(percent, type) {
-        // 原有百分比设置逻辑
-    }
-
-    async function buyTokens() {
-        try {
-            document.getElementById('transactionStatus').className = 'text-center text-sm text-blue-400 pt-4 font-medium';
-            document.getElementById('transactionStatus').innerText = 'Processing buy...';
-            // 原有购买逻辑...
-            document.getElementById('transactionStatus').className = 'text-center text-sm text-green-400 pt-4 font-medium';
-            document.getElementById('transactionStatus').innerText = 'Buy successful!';
-        } catch (error) {
-            document.getElementById('transactionStatus').className = 'text-center text-sm text-web3-pink pt-4 font-medium';
-            document.getElementById('transactionStatus').innerText = `Buy failed: ${error.message}`;
-        }
-    }
-
-    async function sellTokens() {
-        try {
-            document.getElementById('transactionStatus').className = 'text-center text-sm text-blue-400 pt-4 font-medium';
-            document.getElementById('transactionStatus').innerText = 'Processing sell...';
-            // 原有出售逻辑...
-            document.getElementById('transactionStatus').className = 'text-center text-sm text-green-400 pt-4 font-medium';
-            document.getElementById('transactionStatus').innerText = 'Sell successful!';
-        } catch (error) {
-            document.getElementById('transactionStatus').className = 'text-center text-sm text-web3-pink pt-4 font-medium';
-            document.getElementById('transactionStatus').innerText = `Sell failed: ${error.message}`;
-        }
+            const progress = (Number(web3Instance.utils.fromWei(collateral)) / Number(web3Instance.utils.fromWei(fundingGoal))) * 100;
+            return { address: tokenAddress, name, symbol, totalSupply: parseFloat(web3Instance.utils.fromWei(totalSupply)).toLocaleString(), collateral: parseFloat(web3Instance.utils.fromWei(collateral)).toFixed(4), state: ['Funding', 'Trading', 'Failed'][tokenState-1] || 'Unknown', progress: progress.toFixed(2) };
+        } catch { return null; }
     }
 
     async function fetchTokenList(web3Instance) {
-        // 原有代币列表加载逻辑
+        const listDiv = document.getElementById('tokenList');
+        listDiv.innerHTML = '<p class="text-gray-400 col-span-full">Loading tokens...</p>';
+        try {
+            const factory = new web3Instance.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
+            const count = await factory.methods.tokenCount().call();
+            if (count == 0) { listDiv.innerHTML = '<p class="text-gray-400 col-span-full">No tokens created yet.</p>'; return; }
+            const promises = Array.from({length: Number(count)}, (_, i) => getTokenDetails(BigInt(count) - 1n - BigInt(i), web3Instance));
+            const results = await Promise.allSettled(promises);
+            const tokens = results.filter(r => r.status === 'fulfilled' && r.value).map(r => r.value);
+            listDiv.innerHTML = '';
+            if (!tokens.length) { listDiv.innerHTML = '<p class="text-gray-400 col-span-full">No tokens found.</p>'; return; }
+            tokens.forEach(token => {
+                const card = document.createElement('div');
+                card.className = 'glass-effect border border-web3-light-gray/20 rounded-xl p-4 cursor-pointer hover:border-web3-blue transition-all flex flex-col gap-2 text-sm';
+                card.innerHTML = `
+                    <h3 class="font-bold text-white text-md break-words">${token.name} (${token.symbol})</h3>
+                    <p class="text-xs text-gray-400 break-all"><span class="font-semibold text-web3-cyan/70">Address:</span><br>${token.address}</p>
+                    <p><span class="font-semibold text-web3-cyan/70">Total Supply:</span> ${token.totalSupply}</p>
+                    <p><span class="font-semibold text-web3-cyan/70">Collateral:</span> ${token.collateral} OKB</p>
+                    <p><span class="font-semibold text-web3-cyan/70">State:</span> ${token.state}</p>
+                    <div class="w-full bg-web3-gray rounded-full h-1.5 mt-1"><div class="bg-web3-cyan h-1.5 rounded-full" style="width: ${token.progress}%"></div></div>
+                    <p class="text-xs self-end"><span class="font-semibold text-web3-cyan/70">Funding:</span> ${token.progress}%</p>`;
+                card.addEventListener('click', () => {
+                    document.getElementById('contractInput').value = token.address;
+                    searchToken();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                listDiv.appendChild(card);
+            });
+        } catch (e) { listDiv.innerHTML = `<p class="text-web3-pink col-span-full">Failed to fetch token list.</p>`; }
     }
+
+    async function searchToken() {
+        const address = document.getElementById('contractInput').value.trim();
+        const statusEl = document.getElementById('status');
+        if (!address) return;
+        const web3Instance = web3 || new Web3(xLayer.rpcUrl);
+        if (!web3Instance.utils.isAddress(address)) { statusEl.innerText = 'Invalid contract address'; return; }
+        statusEl.innerText = 'Searching...';
+        currentTokenAddress = address;
+        document.getElementById('tokenContract').value = address;
+        await fetchTokenInfo(web3Instance);
+        statusEl.innerText = '';
+        window.history.replaceState({}, '', `?token=${address}`);
+    }
+
+    async function fetchTokenInfo(web3Instance) {
+        const infoEl = document.getElementById('tokenInfo');
+        try {
+            const factory = new web3Instance.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
+            const token = new web3Instance.eth.Contract(tokenABI, currentTokenAddress);
+            const [name, symbol, state, collateral, goal] = await Promise.all([
+                token.methods.name().call(), token.methods.symbol().call(), factory.methods.tokens(currentTokenAddress).call(),
+                factory.methods.collateral(currentTokenAddress).call(), factory.methods.FUNDING_GOAL().call()
+            ]);
+            const progress = (Number(web3Instance.utils.fromWei(collateral)) / Number(web3Instance.utils.fromWei(goal))) * 100;
+            document.getElementById('tokenDetails').innerText = `Token: ${name} (${symbol})`;
+            document.getElementById('progressResult').innerText = `State: ${['Funding', 'Trading', 'Failed'][state-1] || 'Unknown'}`;
+            document.getElementById('progressBar').style.width = `${Math.min(progress, 100)}%`;
+            infoEl.dataset.tokenState = state;
+            infoEl.classList.remove('hidden');
+            enableInputs(!!accounts);
+            if (accounts) await updateBalances();
+        } catch (e) {
+            infoEl.classList.add('hidden');
+            document.getElementById('status').innerText = `Failed to fetch token info.`;
+        }
+    }
+    
+    async function setPercent(percent, action) {
+        if (!web3 || !accounts) return;
+        try {
+            const input = document.getElementById(action === 'buy' ? 'buyAmount' : 'sellAmount');
+            if (action === 'buy') {
+                let balance = Number(web3.utils.fromWei(await web3.eth.getBalance(accounts[0])));
+                let amount = balance * percent / 100;
+                if (percent === 100) amount = balance > 0.001 ? balance - 0.001 : 0;
+                input.value = amount > 0 ? amount.toFixed(6) : 0;
+            } else {
+                const token = new web3.eth.Contract(tokenABI, currentTokenAddress);
+                let balance = Number(web3.utils.fromWei(await token.methods.balanceOf(accounts[0]).call()));
+                input.value = (balance * percent / 100).toFixed(6);
+            }
+        } catch (e) { document.getElementById('transactionStatus').innerText = `Failed to set amount.`; }
+    }
+    
+    async function executeTransaction(action, statusEl, successMsg, failMsg, method, options) {
+        if (!web3 || !accounts || !currentTokenAddress) return;
+        const amount = document.getElementById(`${action}Amount`).value;
+        if (!amount || amount <= 0) { statusEl.innerText = 'Please enter a valid amount'; return; }
+        statusEl.innerText = `Processing ${action}...`;
+        try {
+            const gas = await method.estimateGas(options);
+            await method.send({ ...options, gas: Math.floor(Number(gas) * 1.2) });
+            statusEl.innerText = successMsg;
+            await fetchTokenInfo(web3);
+            await fetchTokenList(web3);
+        } catch (e) { statusEl.innerText = `${failMsg}: ${e.message}`; }
+    }
+    
+    function buyTokens() { executeTransaction('buy', document.getElementById('transactionStatus'), 'Buy successful!', 'Buy failed', tokenFactoryContract.methods.buyTokens(currentTokenAddress), { value: web3.utils.toWei(document.getElementById('buyAmount').value) }); }
+    function sellTokens() { executeTransaction('sell', document.getElementById('transactionStatus'), 'Sell successful!', 'Sell failed', tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(document.getElementById('sellAmount').value)), {}); }
+
+    async function createToken() {
+        const statusEl = document.getElementById('createTokenStatus');
+        if (!web3 || !accounts) { statusEl.innerText = 'Please connect wallet'; return; }
+        const name = document.getElementById('tokenName').value.trim();
+        const symbol = document.getElementById('tokenSymbol').value.trim();
+        if (!name || !symbol) { statusEl.innerText = 'Please enter a valid token name and symbol'; return; }
+        statusEl.innerText = 'Creating token...';
+        try {
+            const gas = await tokenFactoryContract.methods.createToken(name, symbol).estimateGas();
+            await tokenFactoryContract.methods.createToken(name, symbol).send({ gas: Math.floor(Number(gas) * 1.2) });
+            statusEl.innerText = `Transaction sent! Refreshing list...`;
+            setTimeout(() => { fetchTokenList(web3); statusEl.innerText = ''; }, 8000);
+        } catch (e) { statusEl.innerText = `Create failed: ${e.message}`; }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('searchButton').addEventListener('click', searchToken);
+        document.getElementById('contractInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') searchToken(); });
+        document.getElementById('connectWallet').addEventListener('click', connectWallet);
+        
+        const publicWeb3 = new Web3(xLayer.rpcUrl);
+        fetchTokenList(publicWeb3);
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        let tokenAddress = urlParams.get('token');
+        if (tokenAddress) {
+            document.getElementById('contractInput').value = tokenAddress;
+            fetchTokenInfo(publicWeb3);
+        }
+    });
     </script>
 </body>
 </html>

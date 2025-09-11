@@ -117,7 +117,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
-                <div class="lg:col-span-2 space-y-8">
+                <div class="lg:col-span-1 space-y-8">
                     <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
                         <h2 class="text-xl font-bold mb-4 text-white">Token Operations</h2>
                         <label for="tokenContract" class="block text-sm text-web3-cyan mb-2">Token Contract Address:</label>
@@ -130,7 +130,7 @@
                                 <div id="progressBar" class="bg-web3-blue h-2 rounded-full" style="width: 0%;"></div>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6 pt-4">
                                 <div class="space-y-4">
                                     <h3 class="text-lg font-semibold text-white">Buy Tokens</h3>
                                     <label for="buyAmount" class="block text-sm text-web3-cyan mb-1">Amount (OKB): <span id="okbBalance" class="text-gray-400 text-xs"></span></label>
@@ -177,15 +177,17 @@
                     </div>
                 </div>
 
-                <div class="lg:col-span-1 space-y-8">
+                <div class="lg:col-span-2 space-y-8">
                     <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
                         <h2 class="text-xl font-bold mb-4 text-white">Wallet Status</h2>
                         <div id="walletStatus" class="text-center text-gray-400">Not Connected</div>
                     </div>
-                    <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
-                        <h2 class="text-xl font-bold mb-4 text-white">Token List</h2>
-                        <div id="tokenList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                           </div>
+                    <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6 flex flex-col" style="height: 80vh;">
+                        <h2 class="text-xl font-bold mb-4 text-white flex-shrink-0">Token List</h2>
+                        <div class="flex-grow overflow-y-auto pr-2">
+                            <div id="tokenList" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                               </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -318,56 +320,6 @@
         }
     }
 
-    async function fetchTokenList() {
-        const tokenListDiv = document.getElementById('tokenList');
-        if (!web3) {
-            tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">Connect wallet to view tokens</p>';
-            return;
-        }
-        if (!tokenFactoryContract) {
-             tokenFactoryContract = new web3.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
-        }
-        tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">Loading tokens...</p>';
-        try {
-            const tokenCount = await tokenFactoryContract.methods.tokenCount().call();
-            tokenListDiv.innerHTML = '';
-            if (tokenCount == 0) {
-                 tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">No tokens created yet.</p>';
-                 return;
-            }
-
-            const tokenPromises = [];
-            for (let i = BigInt(tokenCount) - 1n; i >= 0; i--) {
-                tokenPromises.push(getTokenDetails(i));
-            }
-            
-            const tokens = await Promise.all(tokenPromises);
-
-            tokens.forEach(token => {
-                if (!token) return;
-                const card = document.createElement('div');
-                card.className = 'glass-effect border border-web3-light-gray/20 rounded-lg p-4 cursor-pointer hover:border-web3-blue transition-all flex flex-col gap-2';
-                card.innerHTML = `
-                    <h3 class="font-bold text-white text-md break-all">${token.name} (${token.symbol})</h3>
-                    <p class="text-xs text-gray-400 break-all"><span class="font-semibold text-gray-300">Address:</span> ${token.address.slice(0,6)}...${token.address.slice(-4)}</p>
-                    <p class="text-xs text-gray-400"><span class="font-semibold text-gray-300">Total Supply:</span> ${token.totalSupply}</p>
-                    <p class="text-xs text-gray-400"><span class="font-semibold text-gray-300">Collateral:</span> ${token.collateral} OKB</p>
-                    <p class="text-xs text-gray-400"><span class="font-semibold text-gray-300">State:</span> ${token.state}</p>
-                    <div class="w-full bg-web3-gray rounded-full h-1.5 mt-1"><div class="bg-web3-cyan h-1.5 rounded-full" style="width: ${token.progress}%"></div></div>
-                    <p class="text-xs text-gray-400 self-end"><span class="font-semibold text-gray-300">Funding:</span> ${token.progress}%</p>
-                `;
-                card.addEventListener('click', () => {
-                    document.getElementById('contractInput').value = token.address;
-                    searchToken();
-                });
-                tokenListDiv.appendChild(card);
-            });
-
-        } catch (error) {
-            tokenListDiv.innerHTML = `<p class="text-web3-pink col-span-full">Failed to fetch token list: ${error.message}</p>`;
-        }
-    }
-    
     async function getTokenDetails(index) {
         try {
             const tokenAddress = await tokenFactoryContract.methods.tokenList(index).call();
@@ -400,11 +352,61 @@
         }
     }
 
+    async function fetchTokenList() {
+        const tokenListDiv = document.getElementById('tokenList');
+        if (!web3) {
+            tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">Connect wallet to view tokens</p>';
+            return;
+        }
+        if (!tokenFactoryContract) {
+             tokenFactoryContract = new web3.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
+        }
+        tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">Loading tokens...</p>';
+        try {
+            const tokenCount = await tokenFactoryContract.methods.tokenCount().call();
+            if (tokenCount == 0) {
+                 tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">No tokens created yet.</p>';
+                 return;
+            }
 
+            const tokenPromises = [];
+            for (let i = BigInt(tokenCount) - 1n; i >= 0; i--) {
+                tokenPromises.push(getTokenDetails(i));
+            }
+            
+            const tokens = (await Promise.all(tokenPromises)).filter(Boolean);
+            
+            tokenListDiv.innerHTML = ''; // Clear loading message
+            
+            tokens.forEach(token => {
+                const card = document.createElement('div');
+                card.className = 'glass-effect border border-web3-light-gray/20 rounded-lg p-4 cursor-pointer hover:border-web3-blue transition-all flex flex-col gap-2 text-sm';
+                card.innerHTML = `
+                    <h3 class="font-bold text-white text-md break-all">${token.name} (${token.symbol})</h3>
+                    <p class="text-xs text-gray-400 break-all"><span class="font-semibold text-gray-300">Address:</span> ${token.address}</p>
+                    <p class="text-gray-400"><span class="font-semibold text-gray-300">Total Supply:</span> ${token.totalSupply}</p>
+                    <p class="text-gray-400"><span class="font-semibold text-gray-300">Collateral:</span> ${token.collateral} OKB</p>
+                    <p class="text-gray-400"><span class="font-semibold text-gray-300">State:</span> ${token.state}</p>
+                    <div class="w-full bg-web3-gray rounded-full h-1.5 mt-1"><div class="bg-web3-cyan h-1.5 rounded-full" style="width: ${token.progress}%"></div></div>
+                    <p class="text-gray-400 self-end"><span class="font-semibold text-gray-300">Funding Progress:</span> ${token.progress}%</p>
+                `;
+                card.addEventListener('click', () => {
+                    document.getElementById('contractInput').value = token.address;
+                    searchToken();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                tokenListDiv.appendChild(card);
+            });
+
+        } catch (error) {
+            tokenListDiv.innerHTML = `<p class="text-web3-pink col-span-full">Failed to fetch token list: ${error.message}</p>`;
+        }
+    }
+    
     async function searchToken() {
         const tokenAddress = document.getElementById('contractInput').value.trim();
         const status = document.getElementById('status');
-        if (!web3.utils.isAddress(tokenAddress)) {
+        if (!web3 || !web3.utils.isAddress(tokenAddress)) {
             status.innerText = 'Invalid contract address';
             return;
         }
@@ -528,15 +530,9 @@
         let tokenAddress = urlParams.get('token');
         if (tokenAddress) {
             document.getElementById('contractInput').value = tokenAddress;
-            // Connect wallet first if needed, then search
-            if (web3 && web3.utils.isAddress(tokenAddress)) {
-                searchToken();
-            } else {
-                // Wait for potential auto-connect
-                setTimeout(()=> {
-                    if(web3 && web3.utils.isAddress(tokenAddress)) searchToken();
-                }, 1000)
-            }
+            setTimeout(()=> {
+                if(web3 && web3.utils.isAddress(tokenAddress)) searchToken();
+            }, 1000)
         }
     });
     </script>

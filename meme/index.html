@@ -116,17 +116,7 @@
             <div id="status" class="text-center text-web3-pink mb-4"></div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1 space-y-8">
-                    <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
-                        <h2 class="text-xl font-bold mb-4 text-white">Wallet Status</h2>
-                        <div id="walletStatus" class="text-center text-gray-400">Not Connected</div>
-                    </div>
-                    <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
-                        <h2 class="text-xl font-bold mb-4 text-white">Token List</h2>
-                        <div id="tokenList" class="space-y-4 max-h-96 overflow-y-auto pr-2"></div>
-                    </div>
-                </div>
-
+                
                 <div class="lg:col-span-2 space-y-8">
                     <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
                         <h2 class="text-xl font-bold mb-4 text-white">Token Operations</h2>
@@ -186,6 +176,18 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="lg:col-span-1 space-y-8">
+                    <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
+                        <h2 class="text-xl font-bold mb-4 text-white">Wallet Status</h2>
+                        <div id="walletStatus" class="text-center text-gray-400">Not Connected</div>
+                    </div>
+                    <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
+                        <h2 class="text-xl font-bold mb-4 text-white">Token List</h2>
+                        <div id="tokenList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                           </div>
+                    </div>
+                </div>
             </div>
         </main>
         
@@ -216,7 +218,6 @@
         "retina_detect": true
     });
 
-    // --- Start of fun.html original script ---
     let web3, accounts, tokenFactoryContract, tokenContract;
     let currentTokenAddress = '';
 
@@ -251,18 +252,13 @@
             const chainId = Number(await web3.eth.getChainId());
             if (chainId !== 196) {
                 try {
-                    await window.ethereum.request({
-                        method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: '0xc4' }]
-                    });
+                    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xc4' }] });
                 } catch (switchError) {
                     if (switchError.code === 4902) {
                         await window.ethereum.request({
                             method: 'wallet_addEthereumChain',
                             params: [{
-                                chainId: '0xc4',
-                                chainName: 'X Layer',
-                                rpcUrls: ['https://rpc.xlayer.tech'],
+                                chainId: '0xc4', chainName: 'X Layer', rpcUrls: ['https://rpc.xlayer.tech'],
                                 nativeCurrency: { name: 'OKB', symbol: 'OKB', decimals: 18 },
                                 blockExplorerUrls: ['https://www.okx.com/explorer/xlayer']
                             }]
@@ -279,7 +275,6 @@
             await fetchTokenList();
         } catch (error) {
             walletStatus.innerText = `Connection failed: ${error.message || 'Unknown error'}`;
-            console.error('Connect wallet error:', error);
         }
     }
 
@@ -288,11 +283,13 @@
         document.getElementById('tokenSymbol').disabled = !enabled;
         document.getElementById('createToken').disabled = !enabled;
         if (currentTokenAddress) {
-          document.getElementById('buyAmount').disabled = !enabled;
-          document.getElementById('sellAmount').disabled = !enabled;
-          document.querySelectorAll('.flex.gap-2 button').forEach(b => b.disabled = !enabled);
-          document.getElementById('buyButton').disabled = !enabled;
-          document.getElementById('sellButton').disabled = !enabled;
+          const tokenState = document.getElementById('tokenInfo').dataset.tokenState;
+          const isFunding = enabled && tokenState == 1;
+          document.getElementById('buyAmount').disabled = !isFunding;
+          document.getElementById('sellAmount').disabled = !isFunding;
+          document.querySelectorAll('.flex.gap-2 button').forEach(b => b.disabled = !isFunding);
+          document.getElementById('buyButton').disabled = !isFunding;
+          document.getElementById('sellButton').disabled = !isFunding;
         }
     }
 
@@ -323,38 +320,41 @@
 
     async function fetchTokenList() {
         const tokenListDiv = document.getElementById('tokenList');
-        if (!web3) { // Use web3 as a proxy for wallet connection
-            tokenListDiv.innerHTML = '<p class="text-gray-400">Connect wallet to view tokens</p>';
+        if (!web3) {
+            tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">Connect wallet to view tokens</p>';
             return;
         }
         if (!tokenFactoryContract) {
              tokenFactoryContract = new web3.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
         }
+        tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">Loading tokens...</p>';
         try {
             const tokenCount = await tokenFactoryContract.methods.tokenCount().call();
             tokenListDiv.innerHTML = '';
             if (tokenCount == 0) {
-                 tokenListDiv.innerHTML = '<p class="text-gray-400">No tokens created yet.</p>';
+                 tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">No tokens created yet.</p>';
                  return;
             }
 
-            const tokens = [];
-            for (let i = BigInt(tokenCount) - 1n; i >= 0; i--) { // Fetch in reverse for newest first
-                const tokenAddress = await tokenFactoryContract.methods.tokenList(i).call();
-                if (tokenAddress !== '0x0000000000000000000000000000000000000000') {
-                    const tokenContractInstance = new web3.eth.Contract(tokenABI, tokenAddress);
-                    const name = await tokenContractInstance.methods.name().call();
-                    const symbol = await tokenContractInstance.methods.symbol().call();
-                    tokens.push({ address: tokenAddress, name, symbol });
-                }
+            const tokenPromises = [];
+            for (let i = BigInt(tokenCount) - 1n; i >= 0; i--) {
+                tokenPromises.push(getTokenDetails(i));
             }
+            
+            const tokens = await Promise.all(tokenPromises);
 
             tokens.forEach(token => {
+                if (!token) return;
                 const card = document.createElement('div');
-                card.className = 'glass-effect border border-web3-light-gray/20 rounded-lg p-3 cursor-pointer hover:border-web3-blue transition-all';
+                card.className = 'glass-effect border border-web3-light-gray/20 rounded-lg p-4 cursor-pointer hover:border-web3-blue transition-all flex flex-col gap-2';
                 card.innerHTML = `
-                    <h3 class="font-bold text-white">${token.name} (${token.symbol})</h3>
-                    <p class="text-xs text-gray-400 break-all">${token.address}</p>
+                    <h3 class="font-bold text-white text-md break-all">${token.name} (${token.symbol})</h3>
+                    <p class="text-xs text-gray-400 break-all"><span class="font-semibold text-gray-300">Address:</span> ${token.address.slice(0,6)}...${token.address.slice(-4)}</p>
+                    <p class="text-xs text-gray-400"><span class="font-semibold text-gray-300">Total Supply:</span> ${token.totalSupply}</p>
+                    <p class="text-xs text-gray-400"><span class="font-semibold text-gray-300">Collateral:</span> ${token.collateral} OKB</p>
+                    <p class="text-xs text-gray-400"><span class="font-semibold text-gray-300">State:</span> ${token.state}</p>
+                    <div class="w-full bg-web3-gray rounded-full h-1.5 mt-1"><div class="bg-web3-cyan h-1.5 rounded-full" style="width: ${token.progress}%"></div></div>
+                    <p class="text-xs text-gray-400 self-end"><span class="font-semibold text-gray-300">Funding:</span> ${token.progress}%</p>
                 `;
                 card.addEventListener('click', () => {
                     document.getElementById('contractInput').value = token.address;
@@ -364,9 +364,42 @@
             });
 
         } catch (error) {
-            tokenListDiv.innerHTML = `<p class="text-web3-pink">Failed to fetch token list.</p>`;
+            tokenListDiv.innerHTML = `<p class="text-web3-pink col-span-full">Failed to fetch token list: ${error.message}</p>`;
         }
     }
+    
+    async function getTokenDetails(index) {
+        try {
+            const tokenAddress = await tokenFactoryContract.methods.tokenList(index).call();
+            if (tokenAddress === '0x0000000000000000000000000000000000000000') return null;
+
+            const tokenContractInstance = new web3.eth.Contract(tokenABI, tokenAddress);
+            const [name, symbol, totalSupply, collateral, tokenState, fundingGoal] = await Promise.all([
+                tokenContractInstance.methods.name().call(),
+                tokenContractInstance.methods.symbol().call(),
+                tokenContractInstance.methods.totalSupply().call(),
+                tokenFactoryContract.methods.collateral(tokenAddress).call(),
+                tokenFactoryContract.methods.tokens(tokenAddress).call(),
+                tokenFactoryContract.methods.FUNDING_GOAL().call()
+            ]);
+            
+            const progress = (Number(web3.utils.fromWei(collateral, 'ether')) / Number(web3.utils.fromWei(fundingGoal, 'ether'))) * 100;
+            
+            return {
+                address: tokenAddress,
+                name,
+                symbol,
+                totalSupply: parseFloat(web3.utils.fromWei(totalSupply, 'ether')).toLocaleString(),
+                collateral: parseFloat(web3.utils.fromWei(collateral, 'ether')).toFixed(4),
+                state: ['Not Created', 'Funding', 'Trading'][tokenState],
+                progress: progress.toFixed(2)
+            };
+        } catch (e) {
+            console.error(`Failed to get details for token at index ${index}`, e);
+            return null;
+        }
+    }
+
 
     async function searchToken() {
         const tokenAddress = document.getElementById('contractInput').value.trim();
@@ -401,17 +434,12 @@
             const progress = (Number(web3.utils.fromWei(collateral, 'ether')) / Number(web3.utils.fromWei(fundingGoal, 'ether'))) * 100;
 
             tokenDetailsEl.innerText = `Token: ${name} (${symbol})`;
-            document.getElementById('progressResult').innerText = `Funding Progress: ${progress.toFixed(2)}% (State: ${['Funding', 'Trading', 'Failed'][tokenState-1]})`;
+            document.getElementById('progressResult').innerText = `Funding Progress: ${progress.toFixed(2)}% (State: ${['Not Created', 'Funding', 'Trading'][tokenState]})`;
             document.getElementById('progressBar').style.width = `${Math.min(progress, 100)}%`;
             tokenInfoEl.classList.remove('hidden');
+            tokenInfoEl.dataset.tokenState = tokenState;
 
-            const isFunding = tokenState == 1 && accounts;
-            document.getElementById('buyAmount').disabled = !isFunding;
-            document.getElementById('sellAmount').disabled = !isFunding;
-            document.querySelectorAll('.flex.gap-2 button').forEach(b => b.disabled = !isFunding);
-            document.getElementById('buyButton').disabled = !isFunding;
-            document.getElementById('sellButton').disabled = !isFunding;
-
+            enableInputs(true);
             await updateBalances();
         } catch (error) {
             tokenInfoEl.classList.add('hidden');
@@ -425,8 +453,8 @@
             if (action === 'buy') {
                 const okbBalance = await web3.eth.getBalance(accounts[0]);
                 let balanceInOKB = Number(web3.utils.fromWei(okbBalance, 'ether'));
-                if (percent === 100) balanceInOKB -= 0.001; // Keep some for gas
-                const amount = (balanceInOKB * percent / 100);
+                let amount = (balanceInOKB * percent / 100);
+                if (percent === 100) amount = balanceInOKB > 0.001 ? balanceInOKB - 0.001 : 0; // Keep some for gas
                 document.getElementById('buyAmount').value = amount > 0 ? amount.toFixed(6) : 0;
             } else {
                 if (!currentTokenAddress || !tokenContract) return;
@@ -442,15 +470,9 @@
 
     async function buyTokens() {
         const transactionStatus = document.getElementById('transactionStatus');
-        if (!web3 || !accounts || !currentTokenAddress) {
-            transactionStatus.innerText = 'Please connect wallet and select a token';
-            return;
-        }
+        if (!web3 || !accounts || !currentTokenAddress) return;
         const amount = document.getElementById('buyAmount').value;
-        if (!amount || amount <= 0) {
-            transactionStatus.innerText = 'Please enter a valid amount';
-            return;
-        }
+        if (!amount || amount <= 0) { transactionStatus.innerText = 'Please enter a valid amount'; return; }
         try {
             transactionStatus.innerText = 'Processing buy order...';
             const gas = await tokenFactoryContract.methods.buyTokens(currentTokenAddress).estimateGas({ from: accounts[0], value: web3.utils.toWei(amount, 'ether') });
@@ -458,22 +480,14 @@
             transactionStatus.innerText = 'Buy successful!';
             await fetchTokenInfo();
             await fetchTokenList();
-        } catch (error) {
-            transactionStatus.innerText = `Buy failed: ${error.message}`;
-        }
+        } catch (error) { transactionStatus.innerText = `Buy failed: ${error.message}`; }
     }
 
     async function sellTokens() {
         const transactionStatus = document.getElementById('transactionStatus');
-        if (!web3 || !accounts || !currentTokenAddress) {
-            transactionStatus.innerText = 'Please connect wallet and select a token';
-            return;
-        }
+        if (!web3 || !accounts || !currentTokenAddress) return;
         const amount = document.getElementById('sellAmount').value;
-        if (!amount || amount <= 0) {
-            transactionStatus.innerText = 'Please enter a valid amount';
-            return;
-        }
+        if (!amount || amount <= 0) { transactionStatus.innerText = 'Please enter a valid amount'; return; }
         try {
             transactionStatus.innerText = 'Processing sell order...';
             const gas = await tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(amount, 'ether')).estimateGas({ from: accounts[0] });
@@ -481,45 +495,22 @@
             transactionStatus.innerText = 'Sell successful!';
             await fetchTokenInfo();
             await fetchTokenList();
-        } catch (error) {
-            transactionStatus.innerText = `Sell failed: ${error.message}`;
-        }
+        } catch (error) { transactionStatus.innerText = `Sell failed: ${error.message}`; }
     }
 
     async function createToken() {
         const createTokenStatus = document.getElementById('createTokenStatus');
-        if (!web3 || !accounts) {
-            createTokenStatus.innerText = 'Please connect wallet';
-            return;
-        }
+        if (!web3 || !accounts) { createTokenStatus.innerText = 'Please connect wallet'; return; }
         const name = document.getElementById('tokenName').value.trim();
         const symbol = document.getElementById('tokenSymbol').value.trim();
-        if (!name || !symbol) {
-            createTokenStatus.innerText = 'Please enter a valid token name and symbol';
-            return;
-        }
+        if (!name || !symbol) { createTokenStatus.innerText = 'Please enter a valid token name and symbol'; return; }
         try {
             createTokenStatus.innerText = 'Creating token...';
             const gas = await tokenFactoryContract.methods.createToken(name, symbol).estimateGas({ from: accounts[0] });
             await tokenFactoryContract.methods.createToken(name, symbol).send({ from: accounts[0], gas: Math.floor(Number(gas) * 1.2) });
-            createTokenStatus.innerText = `Token creation transaction sent!`;
-            // Listen for event or just refresh list after a delay
-            setTimeout(() => {
-                fetchTokenList();
-                createTokenStatus.innerText = '';
-            }, 5000);
-        } catch (error) {
-            createTokenStatus.innerText = `Create failed: ${error.message}`;
-        }
-    }
-
-    function parseUrlAndLoad() {
-        const urlParams = new URLSearchParams(window.location.search);
-        let tokenAddress = urlParams.get('token');
-        if (web3 && web3.utils.isAddress(tokenAddress)) {
-            document.getElementById('contractInput').value = tokenAddress;
-            searchToken();
-        }
+            createTokenStatus.innerText = `Token creation transaction sent! Refreshing list...`;
+            setTimeout(() => { fetchTokenList(); createTokenStatus.innerText = ''; }, 5000);
+        } catch (error) { createTokenStatus.innerText = `Create failed: ${error.message}`; }
     }
     
     document.addEventListener('DOMContentLoaded', () => {
@@ -529,15 +520,25 @@
         });
         document.getElementById('connectWallet').addEventListener('click', connectWallet);
 
-        // Auto-connect if already permitted
         if (window.ethereum && window.ethereum.selectedAddress) {
             connectWallet();
         }
-
-        // Parse URL on load after a slight delay for web3 injection
-        setTimeout(parseUrlAndLoad, 500);
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        let tokenAddress = urlParams.get('token');
+        if (tokenAddress) {
+            document.getElementById('contractInput').value = tokenAddress;
+            // Connect wallet first if needed, then search
+            if (web3 && web3.utils.isAddress(tokenAddress)) {
+                searchToken();
+            } else {
+                // Wait for potential auto-connect
+                setTimeout(()=> {
+                    if(web3 && web3.utils.isAddress(tokenAddress)) searchToken();
+                }, 1000)
+            }
+        }
     });
-    // --- End of fun.html original script ---
     </script>
 </body>
 </html>

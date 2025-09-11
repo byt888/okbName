@@ -7,10 +7,8 @@
     <meta name="keywords" content="JaceFun, OKX, domain token, X Layer, blockchain, NFT, Web3, cryptocurrency, WoofingJace">
     <meta name="robots" content="index, follow">
     <title>JaceFun OKX - Domain Token Trading</title>
-    <base href="/fun/">
-    <link href="https://s2.ssl.qhres2.com/static/56662140ef7d5d03.css" rel="stylesheet">
-    <link href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="icon" href="https://swap.woofingjace.com/image/header/logo.png" type="image/png">
+    <base href="/meme/">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,11 +38,6 @@
     
     <style type="text/tailwindcss">
         @layer utilities {
-            .text-gradient {
-                background-clip: text;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
             .bg-grid {
                 background-image: 
                     linear-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px),
@@ -59,42 +52,13 @@
     </style>
     
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-        }
-        
-        #particles-js {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            pointer-events: none;
-        }
-        
-        .btn-glow:hover {
-            box-shadow: 0 0 15px theme('colors.web3-blue'), 0 0 30px rgba(14, 165, 233, 0.5);
-            transform: translateY(-2px);
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: theme('colors.web3-darker');
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: theme('colors.web3-gray');
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: theme('colors.web3-blue');
-        }
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; pointer-events: none; }
+        .btn-glow:hover { box-shadow: 0 0 15px theme('colors.web3-blue'), 0 0 30px rgba(14, 165, 233, 0.5); transform: translateY(-2px); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: theme('colors.web3-darker'); }
+        ::-webkit-scrollbar-thumb { background: theme('colors.web3-gray'); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: theme('colors.web3-blue'); }
     </style>
 </head>
 <body class="bg-web3-dark text-gray-200 bg-grid">
@@ -116,43 +80,29 @@
             <div id="status" class="text-center text-web3-pink mb-4"></div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
                 <div class="lg:col-span-1 space-y-8">
                     <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
                         <h2 class="text-xl font-bold mb-4 text-white">Token Operations</h2>
-                        <label for="tokenContract" class="block text-sm text-web3-cyan mb-2">Token Contract Address:</label>
-                        <input type="text" id="tokenContract" placeholder="Token address will be populated after search" readonly class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white mb-4">
+                        <input type="text" id="tokenContract" placeholder="Select a token from the list or search" readonly class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white mb-4">
                         
                         <div id="tokenInfo" class="hidden space-y-4">
                             <div id="tokenDetails" class="text-center text-gray-300"></div>
                             <div id="progressResult" class="text-center text-gray-400 text-sm"></div>
-                            <div class="w-full bg-web3-gray rounded-full h-2.5 border border-web3-light-gray/30">
-                                <div id="progressBar" class="bg-web3-blue h-2 rounded-full" style="width: 0%;"></div>
-                            </div>
+                            <div class="w-full bg-web3-gray rounded-full h-2.5 border border-web3-light-gray/30"><div id="progressBar" class="bg-web3-blue h-2 rounded-full" style="width: 0%;"></div></div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6 pt-4">
+                            <div class="grid grid-cols-1 lg:grid-cols-1 gap-6 pt-4">
                                 <div class="space-y-4">
                                     <h3 class="text-lg font-semibold text-white">Buy Tokens</h3>
                                     <label for="buyAmount" class="block text-sm text-web3-cyan mb-1">Amount (OKB): <span id="okbBalance" class="text-gray-400 text-xs"></span></label>
                                     <input type="number" id="buyAmount" placeholder="0.0" step="0.0001" disabled class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white">
-                                    <div class="flex gap-2">
-                                        <button onclick="setPercent(25, 'buy')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">25%</button>
-                                        <button onclick="setPercent(50, 'buy')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">50%</button>
-                                        <button onclick="setPercent(75, 'buy')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">75%</button>
-                                        <button onclick="setPercent(100, 'buy')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">Max</button>
-                                    </div>
+                                    <div class="flex gap-2"><button onclick="setPercent(25, 'buy')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">25%</button><button onclick="setPercent(50, 'buy')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">50%</button><button onclick="setPercent(75, 'buy')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">75%</button><button onclick="setPercent(100, 'buy')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">Max</button></div>
                                     <button id="buyButton" onclick="buyTokens()" disabled class="w-full py-3 rounded-lg bg-gradient-to-r from-web3-blue to-web3-cyan text-white font-medium btn-glow transition-all">Buy Tokens</button>
                                 </div>
                                 <div class="space-y-4">
                                     <h3 class="text-lg font-semibold text-white">Sell Tokens</h3>
                                     <label for="sellAmount" class="block text-sm text-web3-cyan mb-1">Amount (Tokens): <span id="tokenBalance" class="text-gray-400 text-xs"></span></label>
                                     <input type="number" id="sellAmount" placeholder="0.0" step="0.0001" disabled class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white">
-                                    <div class="flex gap-2">
-                                        <button onclick="setPercent(25, 'sell')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">25%</button>
-                                        <button onclick="setPercent(50, 'sell')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">50%</button>
-                                        <button onclick="setPercent(75, 'sell')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">75%</button>
-                                        <button onclick="setPercent(100, 'sell')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">Max</button>
-                                    </div>
+                                    <div class="flex gap-2"><button onclick="setPercent(25, 'sell')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">25%</button><button onclick="setPercent(50, 'sell')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">50%</button><button onclick="setPercent(75, 'sell')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">75%</button><button onclick="setPercent(100, 'sell')" disabled class="flex-1 py-2 text-xs rounded-lg bg-web3-gray hover:bg-web3-light-gray transition-all">Max</button></div>
                                     <button id="sellButton" onclick="sellTokens()" disabled class="w-full py-3 rounded-lg bg-gradient-to-r from-web3-pink to-web3-purple text-white font-medium btn-glow transition-all">Sell Tokens</button>
                                 </div>
                             </div>
@@ -163,14 +113,8 @@
                     <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
                         <h2 class="text-xl font-bold mb-4 text-white">Create Meme Token</h2>
                         <div class="space-y-4">
-                            <div>
-                                <label for="tokenName" class="block text-sm text-web3-cyan mb-2">Token Name:</label>
-                                <input type="text" id="tokenName" placeholder="Enter token name" class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white">
-                            </div>
-                            <div>
-                                <label for="tokenSymbol" class="block text-sm text-web3-cyan mb-2">Token Symbol:</label>
-                                <input type="text" id="tokenSymbol" placeholder="Enter token symbol" class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white">
-                            </div>
+                            <div><label for="tokenName" class="block text-sm text-web3-cyan mb-2">Token Name:</label><input type="text" id="tokenName" placeholder="Enter token name" class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white"></div>
+                            <div><label for="tokenSymbol" class="block text-sm text-web3-cyan mb-2">Token Symbol:</label><input type="text" id="tokenSymbol" placeholder="Enter token symbol" class="w-full px-4 py-3 rounded-lg bg-web3-gray/50 border border-web3-light-gray/30 focus:border-web3-blue focus:outline-none text-white"></div>
                             <button id="createToken" onclick="createToken()" disabled class="w-full py-3 rounded-lg bg-gradient-to-r from-web3-purple to-web3-pink text-white font-medium btn-glow transition-all">Create Token</button>
                             <div id="createTokenStatus" class="text-center text-sm text-gray-400 pt-2"></div>
                         </div>
@@ -178,218 +122,148 @@
                 </div>
 
                 <div class="lg:col-span-2 space-y-8">
-                    <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6">
-                        <h2 class="text-xl font-bold mb-4 text-white">Wallet Status</h2>
-                        <div id="walletStatus" class="text-center text-gray-400">Not Connected</div>
-                    </div>
+                    <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6"><h2 class="text-xl font-bold mb-4 text-white">Wallet Status</h2><div id="walletStatus" class="text-center text-gray-400">Not Connected</div></div>
                     <div class="glass-effect border border-web3-light-gray/20 rounded-xl p-6 flex flex-col" style="height: 80vh;">
                         <h2 class="text-xl font-bold mb-4 text-white flex-shrink-0">Token List</h2>
-                        <div class="flex-grow overflow-y-auto pr-2">
-                            <div id="tokenList" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                               </div>
-                        </div>
+                        <div class="flex-grow overflow-y-auto pr-2"><div id="tokenList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div></div>
                     </div>
                 </div>
             </div>
         </main>
         
-        <footer class="text-center mt-12 py-6 border-t border-web3-light-gray/20">
-            <p class="text-gray-500 text-sm">Powered by <a href="https://x.com/WoofingJace" target="_blank" class="text-web3-blue hover:underline">WoofingJace</a> & <a href="https://www.okx.com/web3/explorer/xlayer" target="_blank" class="text-web3-blue hover:underline">X Layer</a> © 2025</p>
-            <p class="text-gray-600 text-xs mt-2">Not financial advice. Always DYOR!</p>
-        </footer>
+        <footer class="text-center mt-12 py-6 border-t border-web3-light-gray/20"><p class="text-gray-500 text-sm">Powered by <a href="https://x.com/WoofingJace" target="_blank" class="text-web3-blue hover:underline">WoofingJace</a> & <a href="https://www.okx.com/web3/explorer/xlayer" target="_blank" class="text-web3-blue hover:underline">X Layer</a> © 2025</p><p class="text-gray-600 text-xs mt-2">Not financial advice. Always DYOR!</p></footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
     particlesJS('particles-js', {
-        "particles": {
-            "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
-            "color": { "value": ["#0EA5E9", "#8B5CF6", "#EC4899"] },
-            "shape": { "type": "circle" },
-            "opacity": { "value": 0.1, "random": true },
-            "size": { "value": 3, "random": true },
-            "line_linked": { "enable": true, "distance": 150, "color": "#0EA5E9", "opacity": 0.05, "width": 1 },
-            "move": { "enable": true, "speed": 1, "direction": "none", "random": true, "straight": false, "out_mode": "out", "bounce": false }
-        },
-        "interactivity": {
-            "detect_on": "canvas",
-            "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
-            "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.1 } }, "push": { "particles_nb": 3 } }
-        },
+        "particles": { "number": { "value": 60, "density": { "enable": true, "value_area": 800 } }, "color": { "value": ["#0EA5E9", "#8B5CF6", "#EC4899"] }, "shape": { "type": "circle" }, "opacity": { "value": 0.1, "random": true }, "size": { "value": 3, "random": true }, "line_linked": { "enable": true, "distance": 150, "color": "#0EA5E9", "opacity": 0.05, "width": 1 }, "move": { "enable": true, "speed": 1, "direction": "none", "random": true, "straight": false, "out_mode": "out", "bounce": false } },
+        "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true }, "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.1 } }, "push": { "particles_nb": 3 } } },
         "retina_detect": true
     });
 
     let web3, accounts, tokenFactoryContract, tokenContract;
     let currentTokenAddress = '';
-
     const tokenFactoryAddress = '0xaf704a9d83859504200155eD18DE3C671d7b0ae7';
-    const tokenFactoryABI = [
-        {"inputs": [{"internalType": "string", "name": "name", "type": "string"},{"internalType": "string", "name": "symbol", "type": "string"}],"name": "createToken","outputs": [{"internalType": "address", "name": "", "type": "address"}],"stateMutability": "nonpayable","type": "function"},
-        {"inputs": [{"internalType": "address", "name": "tokenAddress", "type": "address"}],"name": "buyTokens","outputs": [],"stateMutability": "payable","type": "function"},
-        {"inputs": [{"internalType": "address", "name": "tokenAddress", "type": "address"},{"internalType": "uint256", "name": "amount", "type": "uint256"}],"name": "sellTokens","outputs": [],"stateMutability": "nonpayable","type": "function"},
-        {"inputs": [{"internalType": "address", "name": "", "type": "address"}],"name": "collateral","outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],"stateMutability": "view","type": "function"},
-        {"inputs": [{"internalType": "address", "name": "", "type": "address"}],"name": "tokens","outputs": [{"internalType": "enum TokenFactory.TokenState", "name": "", "type": "uint8"}],"stateMutability": "view","type": "function"},
-        {"inputs": [],"name": "FUNDING_GOAL","outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],"stateMutability": "view","type": "function"},
-        {"inputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],"name": "tokenList","outputs": [{"internalType": "address", "name": "", "type": "address"}],"stateMutability": "view","type": "function"},
-        {"inputs": [],"name": "tokenCount","outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],"stateMutability": "view","type": "function"}
-    ];
-    const tokenABI = [
-        {"constant": true,"inputs": [{"name": "_owner", "type": "address"}],"name": "balanceOf","outputs": [{"name": "balance", "type": "uint256"}],"type": "function"},
-        {"constant": true,"inputs": [],"name": "totalSupply","outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],"stateMutability": "view","type": "function"},
-        {"constant": true,"inputs": [],"name": "name","outputs": [{"name": "", "type": "string"}],"stateMutability": "view","type": "function"},
-        {"constant": true,"inputs": [],"name": "symbol","outputs": [{"name": "", "type": "string"}],"stateMutability": "view","type": "function"}
-    ];
     const xLayer = { chainId: 196, rpcUrl: 'https://rpc.xlayer.tech' };
+    const tokenFactoryABI = [{"inputs": [{"internalType": "string", "name": "name", "type": "string"},{"internalType": "string", "name": "symbol", "type": "string"}],"name": "createToken","outputs": [{"internalType": "address", "name": "", "type": "address"}],"stateMutability": "nonpayable","type": "function"}, {"inputs": [{"internalType": "address", "name": "tokenAddress", "type": "address"}],"name": "buyTokens","outputs": [],"stateMutability": "payable","type": "function"}, {"inputs": [{"internalType": "address", "name": "tokenAddress", "type": "address"},{"internalType": "uint256", "name": "amount", "type": "uint256"}],"name": "sellTokens","outputs": [],"stateMutability": "nonpayable","type": "function"}, {"inputs": [{"internalType": "address", "name": "", "type": "address"}],"name": "collateral","outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],"stateMutability": "view","type": "function"}, {"inputs": [{"internalType": "address", "name": "", "type": "address"}],"name": "tokens","outputs": [{"internalType": "enum TokenFactory.TokenState", "name": "", "type": "uint8"}],"stateMutability": "view","type": "function"}, {"inputs": [],"name": "FUNDING_GOAL","outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],"stateMutability": "view","type": "function"}, {"inputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],"name": "tokenList","outputs": [{"internalType": "address", "name": "", "type": "address"}],"stateMutability": "view","type": "function"}, {"inputs": [],"name": "tokenCount","outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],"stateMutability": "view","type": "function"}];
+    const tokenABI = [{"constant": true,"inputs": [{"name": "_owner", "type": "address"}],"name": "balanceOf","outputs": [{"name": "balance", "type": "uint256"}],"type": "function"}, {"constant": true,"inputs": [],"name": "totalSupply","outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],"stateMutability": "view","type": "function"}, {"constant": true,"inputs": [],"name": "name","outputs": [{"name": "", "type": "string"}],"stateMutability": "view","type": "function"}, {"constant": true,"inputs": [],"name": "symbol","outputs": [{"name": "", "type": "string"}],"stateMutability": "view","type": "function"}];
 
     async function connectWallet() {
         const walletStatus = document.getElementById('walletStatus');
-        if (!window.ethereum) {
-            walletStatus.innerText = 'Please install MetaMask';
-            return;
-        }
+        if (!window.ethereum) { walletStatus.innerText = 'Please install MetaMask'; return; }
         try {
             web3 = new Web3(window.ethereum);
             await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const chainId = Number(await web3.eth.getChainId());
-            if (chainId !== 196) {
+            const chainId = await web3.eth.getChainId();
+            if (chainId !== xLayer.chainId) {
                 try {
-                    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xc4' }] });
+                    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: web3.utils.toHex(xLayer.chainId) }] });
                 } catch (switchError) {
                     if (switchError.code === 4902) {
                         await window.ethereum.request({
                             method: 'wallet_addEthereumChain',
-                            params: [{
-                                chainId: '0xc4', chainName: 'X Layer', rpcUrls: ['https://rpc.xlayer.tech'],
-                                nativeCurrency: { name: 'OKB', symbol: 'OKB', decimals: 18 },
-                                blockExplorerUrls: ['https://www.okx.com/explorer/xlayer']
-                            }]
+                            params: [{ chainId: web3.utils.toHex(xLayer.chainId), chainName: 'X Layer', rpcUrls: [xLayer.rpcUrl], nativeCurrency: { name: 'OKB', symbol: 'OKB', decimals: 18 }, blockExplorerUrls: ['https://www.okx.com/explorer/xlayer'] }]
                         });
                     } else { throw switchError; }
                 }
             }
             accounts = await web3.eth.getAccounts();
-            tokenFactoryContract = new web3.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
+            tokenFactoryContract = new web3.eth.Contract(tokenFactoryABI, tokenFactoryAddress, { from: accounts[0] });
             walletStatus.innerText = `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
             document.getElementById('connectWallet').innerText = "Connected";
             enableInputs(true);
             await updateBalances();
-            await fetchTokenList();
         } catch (error) {
             walletStatus.innerText = `Connection failed: ${error.message || 'Unknown error'}`;
         }
     }
 
-    function enableInputs(enabled) {
-        document.getElementById('tokenName').disabled = !enabled;
-        document.getElementById('tokenSymbol').disabled = !enabled;
-        document.getElementById('createToken').disabled = !enabled;
-        if (currentTokenAddress) {
-          const tokenState = document.getElementById('tokenInfo').dataset.tokenState;
-          const isFunding = enabled && tokenState == 1;
-          document.getElementById('buyAmount').disabled = !isFunding;
-          document.getElementById('sellAmount').disabled = !isFunding;
-          document.querySelectorAll('.flex.gap-2 button').forEach(b => b.disabled = !isFunding);
-          document.getElementById('buyButton').disabled = !isFunding;
-          document.getElementById('sellButton').disabled = !isFunding;
+    function enableInputs(isConnected) {
+        document.getElementById('tokenName').disabled = !isConnected;
+        document.getElementById('tokenSymbol').disabled = !isConnected;
+        document.getElementById('createToken').disabled = !isConnected;
+        const tokenInfoEl = document.getElementById('tokenInfo');
+        if (currentTokenAddress && tokenInfoEl.dataset.tokenState) {
+            const isFunding = isConnected && tokenInfoEl.dataset.tokenState == 1;
+            document.getElementById('buyAmount').disabled = !isFunding;
+            document.getElementById('sellAmount').disabled = !isFunding;
+            document.querySelectorAll('#tokenInfo .flex.gap-2 button').forEach(b => b.disabled = !isFunding);
+            document.getElementById('buyButton').disabled = !isFunding;
+            document.getElementById('sellButton').disabled = !isFunding;
+        } else {
+            document.getElementById('buyAmount').disabled = true;
+            document.getElementById('sellAmount').disabled = true;
+            document.querySelectorAll('#tokenInfo .flex.gap-2 button').forEach(b => b.disabled = true);
+            document.getElementById('buyButton').disabled = true;
+            document.getElementById('sellButton').disabled = true;
         }
     }
-
+    
     async function updateBalances() {
-        const okbBalanceEl = document.getElementById('okbBalance');
-        const tokenBalanceEl = document.getElementById('tokenBalance');
-        if (!web3 || !accounts) {
-            okbBalanceEl.innerText = '(Connect wallet)';
-            tokenBalanceEl.innerText = '(Connect wallet)';
-            return;
-        }
+        if (!web3 || !accounts) return;
         try {
             const okbBalance = await web3.eth.getBalance(accounts[0]);
-            okbBalanceEl.innerText = `Balance: ${parseFloat(web3.utils.fromWei(okbBalance, 'ether')).toFixed(4)} OKB`;
-            if (currentTokenAddress && web3.utils.isAddress(currentTokenAddress)) {
-                tokenContract = new web3.eth.Contract(tokenABI, currentTokenAddress);
+            document.getElementById('okbBalance').innerText = `Balance: ${parseFloat(web3.utils.fromWei(okbBalance, 'ether')).toFixed(4)} OKB`;
+            if (currentTokenAddress) {
+                const tokenContract = new web3.eth.Contract(tokenABI, currentTokenAddress);
                 const tokenBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
                 const symbol = await tokenContract.methods.symbol().call();
-                tokenBalanceEl.innerText = `Balance: ${parseFloat(web3.utils.fromWei(tokenBalance, 'ether')).toFixed(4)} ${symbol}`;
-            } else {
-                tokenBalanceEl.innerText = '(Select a token)';
+                document.getElementById('tokenBalance').innerText = `Balance: ${parseFloat(web3.utils.fromWei(tokenBalance, 'ether')).toFixed(4)} ${symbol}`;
             }
-        } catch (error) {
-            okbBalanceEl.innerText = '(Error)';
-            tokenBalanceEl.innerText = '(Error)';
-        }
+        } catch (error) { console.error("Failed to update balances:", error); }
     }
 
-    async function getTokenDetails(index) {
+    async function getTokenDetails(index, web3Instance) {
         try {
-            const tokenAddress = await tokenFactoryContract.methods.tokenList(index).call();
+            const factory = new web3Instance.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
+            const tokenAddress = await factory.methods.tokenList(index).call();
             if (tokenAddress === '0x0000000000000000000000000000000000000000') return null;
-
-            const tokenContractInstance = new web3.eth.Contract(tokenABI, tokenAddress);
+            const tokenContractInstance = new web3Instance.eth.Contract(tokenABI, tokenAddress);
             const [name, symbol, totalSupply, collateral, tokenState, fundingGoal] = await Promise.all([
                 tokenContractInstance.methods.name().call(),
                 tokenContractInstance.methods.symbol().call(),
                 tokenContractInstance.methods.totalSupply().call(),
-                tokenFactoryContract.methods.collateral(tokenAddress).call(),
-                tokenFactoryContract.methods.tokens(tokenAddress).call(),
-                tokenFactoryContract.methods.FUNDING_GOAL().call()
+                factory.methods.collateral(tokenAddress).call(),
+                factory.methods.tokens(tokenAddress).call(),
+                factory.methods.FUNDING_GOAL().call()
             ]);
-            
-            const progress = (Number(web3.utils.fromWei(collateral, 'ether')) / Number(web3.utils.fromWei(fundingGoal, 'ether'))) * 100;
-            
-            return {
-                address: tokenAddress,
-                name,
-                symbol,
-                totalSupply: parseFloat(web3.utils.fromWei(totalSupply, 'ether')).toLocaleString(),
-                collateral: parseFloat(web3.utils.fromWei(collateral, 'ether')).toFixed(4),
-                state: ['Not Created', 'Funding', 'Trading'][tokenState],
-                progress: progress.toFixed(2)
-            };
+            const progress = (Number(web3Instance.utils.fromWei(collateral, 'ether')) / Number(web3Instance.utils.fromWei(fundingGoal, 'ether'))) * 100;
+            return { address: tokenAddress, name, symbol, totalSupply: parseFloat(web3Instance.utils.fromWei(totalSupply, 'ether')).toLocaleString(), collateral: parseFloat(web3Instance.utils.fromWei(collateral, 'ether')).toFixed(4), state: ['Not Created', 'Funding', 'Trading'][tokenState], progress: progress.toFixed(2) };
         } catch (e) {
             console.error(`Failed to get details for token at index ${index}`, e);
-            return null;
+            return null; // Return null on error to filter out later
         }
     }
 
-    async function fetchTokenList() {
+    async function fetchTokenList(web3Instance) {
         const tokenListDiv = document.getElementById('tokenList');
-        if (!web3) {
-            tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">Connect wallet to view tokens</p>';
-            return;
-        }
-        if (!tokenFactoryContract) {
-             tokenFactoryContract = new web3.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
-        }
         tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">Loading tokens...</p>';
         try {
-            const tokenCount = await tokenFactoryContract.methods.tokenCount().call();
-            if (tokenCount == 0) {
-                 tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">No tokens created yet.</p>';
-                 return;
-            }
-
+            const factory = new web3Instance.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
+            const tokenCount = await factory.methods.tokenCount().call();
+            if (tokenCount == 0) { tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">No tokens created yet.</p>'; return; }
             const tokenPromises = [];
-            for (let i = BigInt(tokenCount) - 1n; i >= 0; i--) {
-                tokenPromises.push(getTokenDetails(i));
-            }
+            for (let i = BigInt(tokenCount) - 1n; i >= 0; i--) { tokenPromises.push(getTokenDetails(i, web3Instance)); }
             
-            const tokens = (await Promise.all(tokenPromises)).filter(Boolean);
+            const results = await Promise.allSettled(tokenPromises);
+            const tokens = results.filter(r => r.status === 'fulfilled' && r.value).map(r => r.value);
             
-            tokenListDiv.innerHTML = ''; // Clear loading message
+            tokenListDiv.innerHTML = '';
+            if(tokens.length === 0){ tokenListDiv.innerHTML = '<p class="text-gray-400 col-span-full">No tokens found or failed to load.</p>'; return; }
             
             tokens.forEach(token => {
                 const card = document.createElement('div');
                 card.className = 'glass-effect border border-web3-light-gray/20 rounded-lg p-4 cursor-pointer hover:border-web3-blue transition-all flex flex-col gap-2 text-sm';
                 card.innerHTML = `
-                    <h3 class="font-bold text-white text-md break-all">${token.name} (${token.symbol})</h3>
-                    <p class="text-xs text-gray-400 break-all"><span class="font-semibold text-gray-300">Address:</span> ${token.address}</p>
-                    <p class="text-gray-400"><span class="font-semibold text-gray-300">Total Supply:</span> ${token.totalSupply}</p>
-                    <p class="text-gray-400"><span class="font-semibold text-gray-300">Collateral:</span> ${token.collateral} OKB</p>
-                    <p class="text-gray-400"><span class="font-semibold text-gray-300">State:</span> ${token.state}</p>
+                    <h3 class="font-bold text-white text-md break-words">${token.name} (${token.symbol})</h3>
+                    <p class="text-xs text-gray-400 break-all"><span class="font-semibold text-web3-cyan/70">Address:</span><br>${token.address}</p>
+                    <p class="text-gray-400"><span class="font-semibold text-web3-cyan/70">Total Supply:</span> ${token.totalSupply}</p>
+                    <p class="text-gray-400"><span class="font-semibold text-web3-cyan/70">Collateral:</span> ${token.collateral} OKB</p>
+                    <p class="text-gray-400"><span class="font-semibold text-web3-cyan/70">State:</span> ${token.state}</p>
                     <div class="w-full bg-web3-gray rounded-full h-1.5 mt-1"><div class="bg-web3-cyan h-1.5 rounded-full" style="width: ${token.progress}%"></div></div>
-                    <p class="text-gray-400 self-end"><span class="font-semibold text-gray-300">Funding Progress:</span> ${token.progress}%</p>
-                `;
+                    <p class="text-gray-400 self-end"><span class="font-semibold text-web3-cyan/70">Funding:</span> ${token.progress}%</p>`;
                 card.addEventListener('click', () => {
                     document.getElementById('contractInput').value = token.address;
                     searchToken();
@@ -397,58 +271,51 @@
                 });
                 tokenListDiv.appendChild(card);
             });
-
         } catch (error) {
             tokenListDiv.innerHTML = `<p class="text-web3-pink col-span-full">Failed to fetch token list: ${error.message}</p>`;
         }
     }
-    
+
     async function searchToken() {
         const tokenAddress = document.getElementById('contractInput').value.trim();
-        const status = document.getElementById('status');
-        if (!web3 || !web3.utils.isAddress(tokenAddress)) {
-            status.innerText = 'Invalid contract address';
-            return;
-        }
-        
-        status.innerText = 'Searching...';
+        const statusEl = document.getElementById('status');
+        const web3Instance = web3 || new Web3(xLayer.rpcUrl); // Use connected web3 or public RPC
+        if (!web3Instance.utils.isAddress(tokenAddress)) { statusEl.innerText = 'Invalid contract address'; return; }
+        statusEl.innerText = 'Searching...';
         currentTokenAddress = tokenAddress;
         document.getElementById('tokenContract').value = tokenAddress;
-        await fetchTokenInfo();
-        status.innerText = '';
+        await fetchTokenInfo(web3Instance);
+        statusEl.innerText = '';
         window.history.replaceState({}, '', `?token=${tokenAddress}`);
     }
 
-    async function fetchTokenInfo() {
+    async function fetchTokenInfo(web3Instance) {
         const tokenInfoEl = document.getElementById('tokenInfo');
-        const tokenDetailsEl = document.getElementById('tokenDetails');
-        if (!currentTokenAddress || !web3.utils.isAddress(currentTokenAddress)) {
-            tokenInfoEl.classList.add('hidden');
-            return;
-        }
         try {
-            tokenContract = new web3.eth.Contract(tokenABI, currentTokenAddress);
-            const name = await tokenContract.methods.name().call();
-            const symbol = await tokenContract.methods.symbol().call();
-            const tokenState = await tokenFactoryContract.methods.tokens(currentTokenAddress).call();
-            const collateral = await tokenFactoryContract.methods.collateral(currentTokenAddress).call();
-            const fundingGoal = await tokenFactoryContract.methods.FUNDING_GOAL().call();
-            const progress = (Number(web3.utils.fromWei(collateral, 'ether')) / Number(web3.utils.fromWei(fundingGoal, 'ether'))) * 100;
-
-            tokenDetailsEl.innerText = `Token: ${name} (${symbol})`;
+            const factory = new web3Instance.eth.Contract(tokenFactoryABI, tokenFactoryAddress);
+            const token = new web3Instance.eth.Contract(tokenABI, currentTokenAddress);
+            const [name, symbol, tokenState, collateral, fundingGoal] = await Promise.all([
+                token.methods.name().call(),
+                token.methods.symbol().call(),
+                factory.methods.tokens(currentTokenAddress).call(),
+                factory.methods.collateral(currentTokenAddress).call(),
+                factory.methods.FUNDING_GOAL().call()
+            ]);
+            const progress = (Number(web3Instance.utils.fromWei(collateral, 'ether')) / Number(web3Instance.utils.fromWei(fundingGoal, 'ether'))) * 100;
+            document.getElementById('tokenDetails').innerText = `Token: ${name} (${symbol})`;
             document.getElementById('progressResult').innerText = `Funding Progress: ${progress.toFixed(2)}% (State: ${['Not Created', 'Funding', 'Trading'][tokenState]})`;
             document.getElementById('progressBar').style.width = `${Math.min(progress, 100)}%`;
-            tokenInfoEl.classList.remove('hidden');
             tokenInfoEl.dataset.tokenState = tokenState;
-
-            enableInputs(true);
-            await updateBalances();
+            tokenInfoEl.classList.remove('hidden');
+            enableInputs(!!accounts);
+            if (accounts) await updateBalances();
         } catch (error) {
+            console.error("Fetch token info failed:", error);
             tokenInfoEl.classList.add('hidden');
-            tokenDetailsEl.innerText = `Failed to fetch token info.`;
+            document.getElementById('status').innerText = `Failed to fetch info for this token.`;
         }
     }
-
+    
     async function setPercent(percent, action) {
         if (!web3 || !accounts) return;
         try {
@@ -456,83 +323,77 @@
                 const okbBalance = await web3.eth.getBalance(accounts[0]);
                 let balanceInOKB = Number(web3.utils.fromWei(okbBalance, 'ether'));
                 let amount = (balanceInOKB * percent / 100);
-                if (percent === 100) amount = balanceInOKB > 0.001 ? balanceInOKB - 0.001 : 0; // Keep some for gas
+                if (percent === 100) amount = balanceInOKB > 0.001 ? balanceInOKB - 0.001 : 0;
                 document.getElementById('buyAmount').value = amount > 0 ? amount.toFixed(6) : 0;
             } else {
-                if (!currentTokenAddress || !tokenContract) return;
-                const tokenBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
+                const token = new web3.eth.Contract(tokenABI, currentTokenAddress);
+                const tokenBalance = await token.methods.balanceOf(accounts[0]).call();
                 const balanceInTokens = Number(web3.utils.fromWei(tokenBalance, 'ether'));
                 const amount = (balanceInTokens * percent / 100);
                 document.getElementById('sellAmount').value = amount > 0 ? amount.toFixed(6) : 0;
             }
-        } catch (error) {
-            document.getElementById('transactionStatus').innerText = `Failed to set amount.`;
-        }
+        } catch (error) { document.getElementById('transactionStatus').innerText = `Failed to set amount.`; }
     }
 
     async function buyTokens() {
-        const transactionStatus = document.getElementById('transactionStatus');
+        const statusEl = document.getElementById('transactionStatus');
         if (!web3 || !accounts || !currentTokenAddress) return;
         const amount = document.getElementById('buyAmount').value;
-        if (!amount || amount <= 0) { transactionStatus.innerText = 'Please enter a valid amount'; return; }
+        if (!amount || amount <= 0) { statusEl.innerText = 'Please enter a valid amount'; return; }
         try {
-            transactionStatus.innerText = 'Processing buy order...';
-            const gas = await tokenFactoryContract.methods.buyTokens(currentTokenAddress).estimateGas({ from: accounts[0], value: web3.utils.toWei(amount, 'ether') });
-            await tokenFactoryContract.methods.buyTokens(currentTokenAddress).send({ from: accounts[0], value: web3.utils.toWei(amount, 'ether'), gas: Math.floor(Number(gas) * 1.2) });
-            transactionStatus.innerText = 'Buy successful!';
-            await fetchTokenInfo();
-            await fetchTokenList();
-        } catch (error) { transactionStatus.innerText = `Buy failed: ${error.message}`; }
+            statusEl.innerText = 'Processing buy order...';
+            const gas = await tokenFactoryContract.methods.buyTokens(currentTokenAddress).estimateGas({ value: web3.utils.toWei(amount, 'ether') });
+            await tokenFactoryContract.methods.buyTokens(currentTokenAddress).send({ value: web3.utils.toWei(amount, 'ether'), gas: Math.floor(Number(gas) * 1.2) });
+            statusEl.innerText = 'Buy successful!';
+            await fetchTokenInfo(web3);
+            await fetchTokenList(web3);
+        } catch (error) { statusEl.innerText = `Buy failed: ${error.message}`; }
     }
 
     async function sellTokens() {
-        const transactionStatus = document.getElementById('transactionStatus');
+        const statusEl = document.getElementById('transactionStatus');
         if (!web3 || !accounts || !currentTokenAddress) return;
         const amount = document.getElementById('sellAmount').value;
-        if (!amount || amount <= 0) { transactionStatus.innerText = 'Please enter a valid amount'; return; }
+        if (!amount || amount <= 0) { statusEl.innerText = 'Please enter a valid amount'; return; }
         try {
-            transactionStatus.innerText = 'Processing sell order...';
-            const gas = await tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(amount, 'ether')).estimateGas({ from: accounts[0] });
-            await tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(amount, 'ether')).send({ from: accounts[0], gas: Math.floor(Number(gas) * 1.2) });
-            transactionStatus.innerText = 'Sell successful!';
-            await fetchTokenInfo();
-            await fetchTokenList();
-        } catch (error) { transactionStatus.innerText = `Sell failed: ${error.message}`; }
+            statusEl.innerText = 'Processing sell order...';
+            const gas = await tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(amount, 'ether')).estimateGas();
+            await tokenFactoryContract.methods.sellTokens(currentTokenAddress, web3.utils.toWei(amount, 'ether')).send({ gas: Math.floor(Number(gas) * 1.2) });
+            statusEl.innerText = 'Sell successful!';
+            await fetchTokenInfo(web3);
+            await fetchTokenList(web3);
+        } catch (error) { statusEl.innerText = `Sell failed: ${error.message}`; }
     }
 
     async function createToken() {
-        const createTokenStatus = document.getElementById('createTokenStatus');
-        if (!web3 || !accounts) { createTokenStatus.innerText = 'Please connect wallet'; return; }
+        const statusEl = document.getElementById('createTokenStatus');
+        if (!web3 || !accounts) { statusEl.innerText = 'Please connect wallet'; return; }
         const name = document.getElementById('tokenName').value.trim();
         const symbol = document.getElementById('tokenSymbol').value.trim();
-        if (!name || !symbol) { createTokenStatus.innerText = 'Please enter a valid token name and symbol'; return; }
+        if (!name || !symbol) { statusEl.innerText = 'Please enter a valid token name and symbol'; return; }
         try {
-            createTokenStatus.innerText = 'Creating token...';
-            const gas = await tokenFactoryContract.methods.createToken(name, symbol).estimateGas({ from: accounts[0] });
-            await tokenFactoryContract.methods.createToken(name, symbol).send({ from: accounts[0], gas: Math.floor(Number(gas) * 1.2) });
-            createTokenStatus.innerText = `Token creation transaction sent! Refreshing list...`;
-            setTimeout(() => { fetchTokenList(); createTokenStatus.innerText = ''; }, 5000);
-        } catch (error) { createTokenStatus.innerText = `Create failed: ${error.message}`; }
+            statusEl.innerText = 'Creating token...';
+            const gas = await tokenFactoryContract.methods.createToken(name, symbol).estimateGas();
+            await tokenFactoryContract.methods.createToken(name, symbol).send({ gas: Math.floor(Number(gas) * 1.2) });
+            statusEl.innerText = `Token creation transaction sent! Refreshing list...`;
+            setTimeout(() => { fetchTokenList(web3); statusEl.innerText = ''; }, 8000);
+        } catch (error) { statusEl.innerText = `Create failed: ${error.message}`; }
     }
     
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('searchButton').addEventListener('click', searchToken);
-        document.getElementById('contractInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') searchToken();
-        });
+        document.getElementById('contractInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') searchToken(); });
         document.getElementById('connectWallet').addEventListener('click', connectWallet);
-
-        if (window.ethereum && window.ethereum.selectedAddress) {
-            connectWallet();
-        }
+        
+        // Initial load with public RPC
+        const publicWeb3 = new Web3(xLayer.rpcUrl);
+        fetchTokenList(publicWeb3);
         
         const urlParams = new URLSearchParams(window.location.search);
         let tokenAddress = urlParams.get('token');
         if (tokenAddress) {
             document.getElementById('contractInput').value = tokenAddress;
-            setTimeout(()=> {
-                if(web3 && web3.utils.isAddress(tokenAddress)) searchToken();
-            }, 1000)
+            fetchTokenInfo(publicWeb3);
         }
     });
     </script>
